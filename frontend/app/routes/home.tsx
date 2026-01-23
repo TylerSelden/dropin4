@@ -1,6 +1,11 @@
 import type { Route } from "./+types/home";
 import ContentContainer from "../components/ContentContainer.tsx";
+import Logo from "../components/Logo.tsx";
+import TextInput from "../components/TextInput.tsx";
 import { CiChat1 } from "react-icons/ci";
+import { PiLightning } from "react-icons/pi";
+import { GoLock } from "react-icons/go";
+import { FiEyeOff } from "react-icons/fi";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,10 +17,39 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <ContentContainer>
-      <div className="flex justify-center gap-2">
-        <CiChat1 className="text-violet-600 stroke-[2] text-[2.6rem]" />
-        <h1 className="bg-gradient-to-r from-violet-600 via-pink-500 to-rose-500 bg-clip-text text-transparent font-[helvetica] font-semibold text-4xl">DropIn</h1>
+      <Logo />
+
+      <div className="mt-8">
+        <TextInput label="Room Code" id="test" placeholder="Enter room code" />
+        <TextInput label="Username" id="username" placeholder="Your display name" />
+        <p className="ml-1 mt-1 text-sm text-gray-500">
+          Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
+        </p>
+        <button className="w-full font-semibold text-lg mt-6 bg-violet-600 text-white p-2 rounded-md hover:bg-violet-700 transition-colors">Join</button>
       </div>
+
+      <hr className="my-8 border-gray-600" />
+      <h3 className="font-semibold mb-3">How it works:</h3>
+
+      <div className="text-gray-300">
+        <p className="mb-3 flex items-center">
+          <PiLightning className="inline text-red-500 text-lg mr-1" />
+          Enter a username and room code to start chatting
+        </p>
+        <p className="mb-3 flex items-center">
+          <GoLock className="inline text-red-500 text-lg mr-1" />
+          All messages are encrypted for your privacy
+        </p>
+        <p className="mb-3 flex items-center">
+          <FiEyeOff className="inline text-red-500 text-lg mr-1" />
+          Non-persistent rooms do not save any messages
+        </p>
+      </div>
+
+      <footer className="mt-8 text-gray-500 text-sm text-center">
+        <hr className="mb-4 border-gray-600" />
+        &copy; {new Date().getFullYear()} DropIn Chat. All rights reserved.
+      </footer>
     </ContentContainer>
   );
 }
