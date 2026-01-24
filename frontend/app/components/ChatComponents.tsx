@@ -1,35 +1,27 @@
-export function MessageLeft({ children, attachedTop, attachedBottom }: { children: React.ReactNode, attachedTop?: boolean, attachedBottom?: boolean }) {
+export function Message({ children, rightSide, attachedTop, attachedBottom }: { children: React.ReactNode, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean }) {
   return (
-    <>
-      <div className={`flex justify-start my-1 ${!attachedTop ? 'mt-0' : ''} ${!attachedBottom ? 'mb-0' : ''}`}>
-        <div className="flex flex-col items-start">
-          <div className={`max-w-sm px-4 py-3 bg-gradient-to-r from-gray-800 to-gray-700 bg-[length:48rem] rounded-xl rounded-bl-none mr-10 ${attachedTop ? 'rounded-tr-none rounded-tl-none' : ''} ${attachedBottom ? 'rounded-br-none' : ''}`}>
-            { children }
-          </div>
-        </div>
-      </div>
-    </>
+    <div className={`
+      max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl
+      ${rightSide ? 'from-violet-800 to-violet-900 bg-[length:32rem] rounded-br-none' : 'from-gray-800 to-gray-700 bg-[length:48rem] rounded-bl-none' }
+      ${attachedTop ? 'rounded-t-none' : ''}
+      ${attachedBottom ? 'rounded-b-none' : ''}
+    `}>
+      { children }
+    </div>
   );
 }
 
-export function MessageRight({ children, attachedTop, attachedBottom }: { children: React.ReactNode, attachedTop?: boolean, attachedBottom?: boolean }) {
+export function MessageGroup({ children, rightSide }: { children: React.ReactNode, rightSide: boolean }) {
   return (
-    <>
-      <div className={`flex justify-end my-1 ${!attachedTop ? 'mt-0' : ''} ${!attachedBottom ? 'mb-0' : ''}`}>
-        <div className="flex flex-col items-end">
-          <div
-            className={`max-w-sm px-4 py-3 bg-gradient-to-r from-violet-800 to-violet-900 bg-[length:32rem] rounded-xl rounded-br-none ml-10 ${attachedTop ? 'rounded-tr-none rounded-tl-none' : ''} ${attachedBottom ? 'rounded-bl-none' : ''}`}
-          >
-            { children }
-          </div>
-        </div>
+    <div className={`flex my-1 ${rightSide ? 'justify-end ml-10' : 'justify-start mr-10'}`}>
+      <div className="flex flex-col gap-1">
+        { children }
       </div>
-    </>
+    </div>
   );
 }
 
 export function BroadTimestamp({ timestamp }: { timestamp: number }) {
-  // convert timestamp (a Date.now()) to Today, Yesterday, weekday (if within last 7 days), or MM/DD/YYYY
   return (
     <h4 className="text-center text-gray-500 my-2">
       {(() => {
