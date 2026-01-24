@@ -17,7 +17,9 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
   return (
     <ContentContainer>
-      <Logo />
+      <div className="flex justify-center">
+        <Logo />
+      </div>
 
       <div className="mt-8">
         <TextInput label="Room Code" id="test" placeholder="Enter room code" />
@@ -34,7 +36,7 @@ export default function Home() {
       <div className="text-gray-300">
         <p className="mb-3 flex items-center">
           <PiLightning className="inline text-red-500 text-lg mr-1" />
-          Enter a username and room code to start chatting
+          Enter a room code and username to start chatting
         </p>
         <p className="mb-3 flex items-center">
           <GoLock className="inline text-red-500 text-lg mr-1" />
