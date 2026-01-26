@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import Logo from "../components/Logo.tsx";
-import { Message, MessageGroup, BroadTimestamp, LeftTimestamp, RightTimestamp } from "../components/ChatComponents.tsx";
+import { Message, MessageGroup, BroadTimestamp, FineTimestamp } from "../components/ChatComponents.tsx";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -25,7 +25,7 @@ export default function Chat() {
         <MessageGroup>
           <Message attachedBottom>Here is another message bubble aligned to the left. This one is for testing purposes as well. It should look different from the one on the right.</Message>
           <Message attachedTop>This is a test message bubble aligned to the left. It should have a different background color and alignment compared to the right-aligned bubble.</Message>
-          <LeftTimestamp name="Alex" timestamp={ 1769275604010 }  />
+          <FineTimestamp name="Alex" timestamp={ 1769275604010 }  />
         </MessageGroup>
 
         <BroadTimestamp timestamp={ 1769275604010 }></BroadTimestamp>
@@ -33,23 +33,32 @@ export default function Chat() {
           <Message rightSide attachedBottom>This is a test message bubble aligned to the right. It should have a different background color and alignment compared to the left-aligned bubble.</Message>
           <Message rightSide attachedTop attachedBottom>Here is another right-aligned message bubble for testing. It should maintain the same style as the previous right-aligned bubble.</Message>
           <Message rightSide attachedTop>This is the last right-aligned message bubble in this test sequence.</Message>
-          <RightTimestamp name="Tyler" timestamp={ 1769275604010 + 180000 } />
+          <FineTimestamp name="Tyler" timestamp={ 1769275604010 + 180000 } rightSide />
         </MessageGroup>
 
         <MessageGroup>
           <Message>This is a standalone left-aligned message bubble to test spacing and layout.</Message>
-          <LeftTimestamp name="Alex" timestamp={ 1769275604010 + 320000 } />
+          <FineTimestamp name="Alex" timestamp={ 1769275604010 + 320000 } />
         </MessageGroup>
 
         <MessageGroup>
+          <Message attachedBottom>Two more messages from me</Message>
+          <Message attachedTop>This is the second message in this quick succession test.</Message>
+          <FineTimestamp name="Alex" timestamp={ 1769275604010 + 1000000 } />
+        </MessageGroup>
+          
+
+        <MessageGroup>
           <Message attachedBottom>Just checking</Message>
-          <Message attachedTop>This happened later in the conversation.</Message>
-          <LeftTimestamp name="Alex" timestamp={ 1769275604010 + 600000 } />
+          <Message attachedTop attachedBottom>If multiple messages are sent in quick succession, they should appear connected without extra spacing.</Message>
+          <Message attachedTop attachedBottom spaceTop>This mesage was sent 5-10 mins after the previos one.</Message>
+          <Message attachedTop>See if the timestamp placement is correct.</Message>
+          <FineTimestamp name="Samantha" timestamp={ 1769275604010 + 1800000 } />
         </MessageGroup>
 
         <MessageGroup rightSide>
           <Message rightSide>Lowkey don't even know anyone named alex</Message>
-          <RightTimestamp name="Tyler" timestamp={ 1769275604010 + 900000 } />
+          <FineTimestamp name="Tyler" timestamp={ 1769275604010 + 2500000 } rightSide />
         </MessageGroup>
       </main>
     </>
