@@ -3,7 +3,7 @@
 export default function TextInput({ label, id, placeholder }: { label: string; id: string; placeholder: string }) {
   return (
     <>
-      <label for="roomcode" className="ml-1 mt-4 block">{ label }</label>
+      <label for={ id } className="ml-1 mt-4 block">{ label }</label>
       <input
         type="text"
         placeholder={ placeholder }

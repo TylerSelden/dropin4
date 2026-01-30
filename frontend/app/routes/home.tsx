@@ -27,7 +27,7 @@ export default function Home() {
         <p className="ml-1 mt-1 text-sm text-gray-500">
           Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
-        <button className="w-full font-semibold text-lg mt-6 bg-violet-600 text-white p-2 rounded-md hover:bg-violet-700 transition-colors">Join</button>
+        <button className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 transition-colors">Join</button>
       </div>
 
       <hr className="my-8 border-gray-600" />
@@ -35,15 +35,15 @@ export default function Home() {
 
       <div className="text-gray-300">
         <p className="mb-3 flex items-center">
-          <PiLightning className="inline text-red-500 text-lg mr-1" />
+          <PiLightning className="inline text-red-500 text-lg mr-2" />
           Enter a room code and username to start chatting
         </p>
         <p className="mb-3 flex items-center">
-          <GoLock className="inline text-red-500 text-lg mr-1" />
+          <GoLock className="inline text-red-500 text-lg mr-2" />
           All messages are encrypted for your privacy
         </p>
         <p className="mb-3 flex items-center">
-          <FiEyeOff className="inline text-red-500 text-lg mr-1" />
+          <FiEyeOff className="inline text-red-500 text-lg mr-2" />
           Non-persistent rooms do not save any messages
         </p>
       </div>

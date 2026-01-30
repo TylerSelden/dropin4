@@ -1,3 +1,6 @@
+import { useRef, useEffect } from 'react';
+import { IoIosSend } from 'react-icons/io';
+
 export function Message({ children, rightSide, attachedTop, attachedBottom, spaceTop }: { children: React.ReactNode, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean, spaceTop?: boolean }) {
   return (
     <div className={`
@@ -69,5 +72,56 @@ export function FineTimestamp({ name, timestamp, rightSide }: { name: string; ti
         </>
       )}
     </p>
+  );
+}
+
+export function ChatInput() {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const adjustTextareaHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const scrollY = window.scrollY;
+      const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 20;
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + 2 + "px"; // +2 for border
+      scrollTo(0, atBottom ? document.body.scrollHeight : scrollY);
+    }
+  };
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      adjustTextareaHeight();
+    });
+
+    resizeObserver.observe(textarea);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+
+  return (
+    <footer className="p-3 w-full sticky bottom-0 flex justify-center">
+      <div className="relative w-4xl flex items-end">
+        <textarea
+          className="w-full resize-none rounded-[25px] p-3 pl-5 pr-11 bg-gray-800 border border-gray-600 overflow-hidden focus:outline-none focus:ring-1 focus:ring-violet-600 relative z-10"
+          rows={1}
+          ref={textareaRef}
+          placeholder="Type your message..."
+          onInput={adjustTextareaHeight}
+        ></textarea>
+
+        <div className="absolute left-0 bottom-0 h-[50px] w-full flex items-center justify-end">
+          <button className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-600 active:bg-violet-800 transition-colors z-15">
+            <IoIosSend size={24} />
+          </button>
+        </div>
+      </div>
+    </footer>
   );
 }

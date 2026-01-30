@@ -1,6 +1,7 @@
 import type { Route } from "./+types/home";
 import Logo from "../components/Logo.tsx";
-import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput } from "../components/ChatComponents.tsx";
+import { Message, MessageGroup, BroadTimestamp, FineTimestamp } from "../components/ChatComponents.tsx";
+import { IoIosSend } from "react-icons/io";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -62,7 +63,28 @@ export default function Chat() {
         </MessageGroup>
       </main>
 
-      <ChatInput />
+      <footer className="p-3 w-full sticky bottom-0 flex justify-center">
+        <div className="w-4xl relative">
+          <textarea
+            className="w-full resize-none rounded-[20px] p-2 pl-4 pr-10 bg-gray-800 border border-gray-600 overflow-hidden focus:outline-none focus:ring-1 focus:ring-violet-600"
+            placeholder="Type your message..."
+            onInput={(e) => {
+              const scrollY = window.scrollY;
+              const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 20;
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = "auto";
+              target.style.height = target.scrollHeight + "px";
+              scrollTo(0, atBottom ? document.body.scrollHeight : scrollY);
+              console.log(e.target.rows);
+            }}
+          ></textarea>
+          <div className="absolute right-2 bottom-2 flex items-center justify-end p-2">
+            <button className="absolute font-semibold bg-violet-700 h-4 rounded-full hover:bg-violet-600 active:bg-violet-800 transition-colors">
+              <IoIosSend className="w-full h-full" />
+            </button>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
