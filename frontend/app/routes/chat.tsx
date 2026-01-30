@@ -20,7 +20,7 @@ export default function Chat() {
         </p>
       </header>
 
-      <main className="px-4">
+      <main className="px-4 pb-15">
         <BroadTimestamp timestamp={ 1769275604010 - 86400000 }></BroadTimestamp>
         <MessageGroup>
           <Message attachedBottom>Here is another message bubble aligned to the left. This one is for testing purposes as well. It should look different from the one on the right.</Message>

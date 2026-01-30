@@ -1,5 +1,8 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { IoIosSend } from 'react-icons/io';
+import { BsFillMarkdownFill } from "react-icons/bs";
+import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 
 export function Message({ children, rightSide, attachedTop, attachedBottom, spaceTop }: { children: React.ReactNode, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean, spaceTop?: boolean }) {
   return (
@@ -77,6 +80,7 @@ export function FineTimestamp({ name, timestamp, rightSide }: { name: string; ti
 
 export function ChatInput() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [markdownShowing, setMarkdownShowing] = useState(false);
 
   const adjustTextareaHeight = () => {
     const textarea = textareaRef.current;
@@ -106,10 +110,17 @@ export function ChatInput() {
 
 
   return (
-    <footer className="p-3 w-full sticky bottom-0 flex justify-center">
+    <footer className="p-3 w-full fixed bottom-0 flex justify-center">
       <div className="relative w-4xl flex items-end">
+        <div className={`w-full max-h-[80dvh] overflow-scroll rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
+          <div
+            className="prose prose-invert max-w-full"
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(textareaRef.current?.value || '')) }}
+          ></div>
+        </div>
+
         <textarea
-          className="w-full resize-none rounded-[25px] p-3 pl-5 pr-11 bg-gray-800 border border-gray-600 overflow-hidden focus:outline-none focus:ring-1 focus:ring-violet-600 relative z-10"
+          className={`w-full resize-none max-h-[80dvh] overflow-scroll rounded-[25px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 outline-none focus:ring-1 focus:ring-violet-600 z-10 ${markdownShowing ? 'hidden' : ''}`}
           rows={1}
           ref={textareaRef}
           placeholder="Type your message..."
@@ -117,6 +128,9 @@ export function ChatInput() {
         ></textarea>
 
         <div className="absolute left-0 bottom-0 h-[50px] w-full flex items-center justify-end">
+          <button className={`mr-2 rounded-3/4 hover:text-gray-300 active:text-gray-500 transition-colors z-15 text-${markdownShowing ? 'white-400' : 'gray-400'}`} onClick={() => setMarkdownShowing(!markdownShowing)}>
+            <BsFillMarkdownFill size={28} />
+          </button>
           <button className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-600 active:bg-violet-800 transition-colors z-15">
             <IoIosSend size={24} />
           </button>
