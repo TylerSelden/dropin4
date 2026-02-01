@@ -114,7 +114,7 @@ export function ChatInput() {
       <div className="relative w-4xl flex items-end">
         <div className={`w-full max-h-[80dvh] overflow-scroll rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
           <div
-            className="prose prose-invert max-w-full"
+            className="max-w-full prose prose-invert"
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(textareaRef.current?.value || '')) }}
           ></div>
         </div>
