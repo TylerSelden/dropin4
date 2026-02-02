@@ -110,8 +110,8 @@ export function ChatInput() {
 
 
   return (
-    <footer className="p-3 w-full fixed bottom-0 flex justify-center">
-      <div className="relative w-4xl flex items-end">
+    <footer className="p-3 w-full fixed bottom-0 flex justify-center pointer-events-none">
+      <div className="relative w-4xl flex items-end pointer-events-auto">
         <div className={`w-full max-h-[80dvh] overflow-scroll rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
           <div
             className="max-w-full prose prose-invert"
