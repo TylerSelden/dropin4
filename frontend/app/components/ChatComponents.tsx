@@ -4,16 +4,17 @@ import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
-export function Message({ children, rightSide, attachedTop, attachedBottom, spaceTop }: { children: React.ReactNode, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean, spaceTop?: boolean }) {
+export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }: { text: string, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean, spaceTop?: boolean }) {
   return (
     <div className={`
-      max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl
+      max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert
       ${rightSide ? 'from-violet-800 to-violet-900 bg-[length:32rem] rounded-br-none' : 'from-gray-800 to-gray-700 bg-[length:48rem] rounded-bl-none' }
       ${attachedTop ? 'rounded-t-none' : 'mt-2'}
       ${attachedBottom ? 'rounded-b-none' : ''}
       ${spaceTop ? 'mt-2' : ''}
-    `}>
-      { children }
+    `}
+      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(text)) }}
+    >
     </div>
   );
 }
@@ -128,7 +129,7 @@ export function ChatInput() {
         ></textarea>
 
         <div className="absolute left-0 bottom-0 h-[50px] w-full flex items-center justify-end">
-          <button className={`mr-2 rounded-3/4 hover:text-gray-300 active:text-gray-500 transition-colors z-15 text-${markdownShowing ? 'white-400' : 'gray-400'}`} onClick={() => setMarkdownShowing(!markdownShowing)}>
+          <button className={`mr-2 rounded-3/4 hover:text-gray-300 active:text-gray-500 transition-colors z-15 text-${markdownShowing ? 'gray-300' : 'gray-500'}`} onClick={() => setMarkdownShowing(!markdownShowing)}>
             <BsFillMarkdownFill size={28} />
           </button>
           <button className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-600 active:bg-violet-800 transition-colors z-15">
