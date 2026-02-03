@@ -10,6 +10,16 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 
+import { marked } from "marked";
+
+marked.use({
+  renderer: {
+    html(src) {
+      return src.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n\n/g, "<br /><br />");
+    },
+  },
+});
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {

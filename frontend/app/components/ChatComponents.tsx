@@ -140,3 +140,48 @@ export function ChatInput() {
     </footer>
   );
 }
+
+export function ChatContainer({ messages, username }: { messages: Array<{ user: string, message: string, timestamp: number }>, username: string }) {
+  const messageGroups: Array<{ user: string, messages: Array<{ message: string, timestamp: number }> }> = [];
+
+  messages.forEach((message) => {
+    const lastGroup = messageGroups[messageGroups.length - 1];
+    if (lastGroup && lastGroup.user === message.user) {
+      const lastMessage = lastGroup.messages[lastGroup.messages.length - 1];
+      if ((message.timestamp - lastMessage.timestamp) < 10 * 60 * 1000) return lastGroup.messages.push({ message: message.message, timestamp: message.timestamp });
+    }
+    messageGroups.push({ user: message.user, messages: [{ message: message.message, timestamp: message.timestamp }] });
+  });
+
+  return (
+    <main className="px-4 pb-15">
+      { messageGroups.map((group, groupIndex) => {
+        const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).getDate() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).getDate());
+        const rightSide = group.user === username;
+        return (
+          <>
+            { broadTimestampNeeded && <BroadTimestamp timestamp={group.messages[0].timestamp} /> }
+            <MessageGroup key={groupIndex} rightSide={rightSide}>
+              { group.messages.map((message, messageIndex) => {
+                const attachedTop = messageIndex > 0;
+                const attachedBottom = messageIndex < group.messages.length - 1;
+                const spaceTop = messageIndex > 0 && (message.timestamp - group.messages[messageIndex - 1].timestamp) > 5 * 60 * 1000;
+                return (
+                  <Message
+                    key={messageIndex}
+                    text={message.message}
+                    rightSide={rightSide}
+                    attachedTop={attachedTop}
+                    attachedBottom={attachedBottom}
+                    spaceTop={spaceTop}
+                  />
+                );
+              }) }
+              <FineTimestamp name={group.user} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
+            </MessageGroup>
+          </>
+        );
+      }) }
+    </main>
+  );
+}

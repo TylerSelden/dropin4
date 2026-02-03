@@ -1,6 +1,6 @@
 import type { Route } from "./+types/home";
 import Logo from "../components/Logo.tsx";
-import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput } from "../components/ChatComponents.tsx";
+import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput, ChatContainer } from "../components/ChatComponents.tsx";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +8,140 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "DropIn is a simple, web-based chat app" },
   ];
 }
+
+const messages = [
+  // === ~3 weeks ago ===
+  {
+    user: "Alex",
+    message: "Is anyone else seeing flaky CI runs?",
+    timestamp: 1770057067731 - 21 * 86_400_000
+  },
+  {
+    user: "Tyler",
+    message: "Yeah, looks like a race condition in the auth.",
+    timestamp: 1770057067731 - 21 * 86_400_000 + 3 * 60_000
+  },
+
+  // === ~2 weeks ago ===
+  {
+    user: "Samantha",
+    message: "Pushing a small refactor to the session manager.",
+    timestamp: 1770057067731 - 14 * 86_400_000
+  },
+  {
+    user: "Alex",
+    message: "Nice — I’ll review after lunch.",
+    timestamp: 1770057067731 - 14 * 86_400_000 + 4 * 60_000
+  },
+
+  // === 7 days ago ===
+  {
+    user: "Tyler",
+    message: "Heads up: prod deploy scheduled for tonight.",
+    timestamp: 1770057067731 - 7 * 86_400_000
+  },
+  {
+    user: "Samantha",
+    message: "I’ll be around if anything goes sideways.",
+    timestamp: 1770057067731 - 7 * 86_400_000 + 2 * 60_000
+  },
+
+  // === 6 days ago ===
+  {
+    user: "Alex",
+    message: "Deploy went smoothly 🎉",
+    timestamp: 1770057067731 - 6 * 86_400_000
+  },
+  {
+    user: "Tyler",
+    message: "Nice. Monitoring logs now.",
+    timestamp: 1770057067731 - 6 * 86_400_000 + 90 * 1000
+  },
+  {
+    user: "Tyler",
+    message: "Seeing a small spike in refresh-token retries.",
+    timestamp: 1770057067731 - 6 * 86_400_000 + 6 * 60_000
+  },
+
+  // === 3 days ago ===
+  {
+    user: "Samantha",
+    message: "That retry spike might explain yesterday’s alert.",
+    timestamp: 1770057067731 - 3 * 86_400_000
+  },
+  {
+    user: "Tyler",
+    message: "Agreed — digging into it now.",
+    timestamp: 1770057067731 - 3 * 86_400_000 + 2 * 60_000
+  },
+  // === Today ===
+  {
+    user: "Alex",
+    message: "Morning folks — did anyone actually sleep?",
+    timestamp: 1770057067731
+  },
+  // +30 sec
+  {
+    user: "Samantha",
+    message: "Barely 😅",
+    timestamp: 1770057097731
+  },
+  // +30 sec
+  {
+    user: "Samantha",
+    message: "I stayed up fixing that `weird bug` we saw yesterday.",
+    timestamp: 1770057127731
+  },
+  // +1 min
+  {
+    user: "Tyler",
+    message: "Respect. I crashed immediately.",
+    timestamp: 1770057187731
+  },
+  // +1 min
+  {
+    user: "Alex",
+    message: "Same here. Coffee is doing the heavy lifting.",
+    timestamp: 1770057247731
+  },
+  // +2 min
+  {
+    user: "Tyler",
+    message: "## Quick update\nI started reviewing the logs from last night.",
+    timestamp: 1770057367731
+  },
+  // +50 sec
+  {
+    user: "Tyler",
+    message: "Found something odd about the auth flow…",
+    timestamp: 1770057417731
+  },
+  // +6 min
+  {
+    user: "Tyler",
+    message: "It *might* be related to the token refresh timing.",
+    timestamp: 1770057777731
+  },
+  // +11 min
+  {
+    user: "Tyler",
+    message: "Here’s a tiny repro I put together:\n```js\nrefreshToken(user);\nvalidateSession(user);\n```",
+    timestamp: 1770058437731
+  },
+  // +30 min
+  {
+    user: "Tyler",
+    message: "Basically, the order matters more than we thought.",
+    timestamp: 1770060237731
+  },
+  // +2 hrs
+  {
+    user: "Tyler",
+    message: "**Good news:** it’s fixable.\n*Bad news:* it’s subtle.",
+    timestamp: 1770067557731
+  }
+];
+
 
 export default function Chat() {
   return (
@@ -20,47 +154,7 @@ export default function Chat() {
         </p>
       </header>
 
-      <main className="px-4 pb-15">
-       <BroadTimestamp timestamp={ 1769275604010 - 86400000 }></BroadTimestamp>
-        <MessageGroup>
-          <Message attachedBottom text="Here is another message bubble aligned to the left. This one is for testing purposes as well. It should look different from the one on the right." />
-          <Message attachedTop text="This is a test message bubble aligned to the left. It should have a different background color and alignment compared to the right-aligned bubble." />
-          <FineTimestamp name="Alex" timestamp={ 1769275604010 }  />
-        </MessageGroup>
-
-        <BroadTimestamp timestamp={ 1769275604010 }></BroadTimestamp>
-        <MessageGroup rightSide>
-          <Message rightSide attachedBottom text="This is a test message bubble aligned to the right. It should have a different background color and alignment compared to the left-aligned bubble." />
-          <Message rightSide attachedTop attachedBottom text="Here is another right-aligned message bubble for testing. It should maintain the same style as the previous right-aligned bubble." />
-          <Message rightSide attachedTop text="This is the last right-aligned message bubble in this test sequence." />
-          <FineTimestamp name="Tyler" timestamp={ 1769275604010 + 180000 } rightSide />
-        </MessageGroup>
-
-        <MessageGroup>
-          <Message text="This is a standalone left-aligned message bubble to test spacing and layout." />
-          <FineTimestamp name="Alex" timestamp={ 1769275604010 + 320000 } />
-        </MessageGroup>
-
-        <MessageGroup>
-          <Message attachedBottom text="Two more messages from me" />
-          <Message attachedTop text="This is the second message in this quick succession test." />
-          <FineTimestamp name="Alex" timestamp={ 1769275604010 + 1000000 } />
-        </MessageGroup>
-          
-
-        <MessageGroup>
-          <Message attachedBottom text="Just checking" />
-          <Message attachedTop attachedBottom text="If multiple messages are sent in quick succession, they should appear connected without extra spacing." />
-          <Message attachedTop attachedBottom spaceTop text="This mesage was sent 5-10 mins after the previos one." />
-          <Message attachedTop text="See if the timestamp placement is correct." />
-          <FineTimestamp name="Samantha" timestamp={ 1769275604010 + 1800000 } />
-        </MessageGroup>
-
-        <MessageGroup rightSide>
-          <Message rightSide text="Lowkey don't even know anyone named alex" />
-          <FineTimestamp name="Tyler" timestamp={ 1769275604010 + 2500000 } rightSide />
-        </MessageGroup>
-      </main>
+      <ChatContainer messages={messages} username="Tyler" />
 
       <ChatInput />
     </>
