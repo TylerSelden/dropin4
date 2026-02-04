@@ -111,11 +111,11 @@ export function ChatInput() {
 
 
   return (
-    <footer className="p-3 w-full fixed bottom-0 flex justify-center pointer-events-none">
-      <div className="relative w-4xl flex items-end pointer-events-auto">
-        <div className={`w-full max-h-[80dvh] overflow-scroll rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
+    <footer className="p-3 w-full max-w-screen fixed bottom-0 flex justify-center pointer-events-none">
+      <div className="relative w-4xl max-w-full flex items-end pointer-events-auto">
+        <div className={`w-full overflow-y-scroll max-h-[80dvh] rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
           <div
-            className="max-w-full prose prose-invert"
+            className="w-full max-w-none break-words prose prose-invert"
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(textareaRef.current?.value || '')) }}
           ></div>
         </div>

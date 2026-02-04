@@ -8,3 +8,7 @@
 html, body {
   @apply bg-slate-900 min-h-screen font-sans text-neutral-300;
 }
+
+code {
+  @apply overflow-x-auto max-w-full;
+}
