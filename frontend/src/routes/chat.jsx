@@ -1,14 +1,6 @@
-import type { Route } from "./+types/home";
 import { Link } from "react-router";
-import Logo from "../components/Logo.tsx";
-import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput, ChatContainer } from "../components/ChatComponents.tsx";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "DropIn Chat" },
-    { name: "description", content: "DropIn is a simple, web-based chat app" },
-  ];
-}
+import Logo from "../components/Logo";
+import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput, ChatContainer } from "../components/ChatComponents";
 
 const messages = [
   // === ~3 weeks ago ===

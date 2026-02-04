@@ -1,18 +1,10 @@
-import type { Route } from "./+types/home";
-import ContentContainer from "../components/ContentContainer.tsx";
-import Logo from "../components/Logo.tsx";
-import TextInput from "../components/TextInput.tsx";
+import ContentContainer from "../components/ContentContainer";
+import Logo from "../components/Logo";
+import TextInput from "../components/TextInput";
 import { CiChat1 } from "react-icons/ci";
 import { PiLightning } from "react-icons/pi";
 import { GoLock } from "react-icons/go";
 import { FiEyeOff } from "react-icons/fi";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "DropIn Chat" },
-    { name: "description", content: "DropIn is a simple, web-based chat app" },
-  ];
-}
 
 export default function Home() {
   return (

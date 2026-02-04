@@ -4,7 +4,7 @@ import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 
-export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }: { text: string, rightSide?: boolean, attachedTop?: boolean, attachedBottom?: boolean, spaceTop?: boolean }) {
+export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }) {
   return (
     <div className={`
       max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert
@@ -19,7 +19,7 @@ export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop
   );
 }
 
-export function MessageGroup({ children, rightSide }: { children: React.ReactNode, rightSide: boolean }) {
+export function MessageGroup({ children, rightSide }) {
   return (
     <div className={`flex my-1 ${rightSide ? 'justify-end ml-6' : 'justify-start mr-6'}`}>
       <div className="flex flex-col gap-1">
@@ -35,7 +35,8 @@ export function SmallMessageSpacer() {
   );
 }
 
-export function BroadTimestamp({ timestamp }: { timestamp: number }) {
+// TODO: the code looks more messy than is necessary
+export function BroadTimestamp({ timestamp }) {
   return (
     <h4 className="text-center text-gray-500 mt-2">
       {(() => {
@@ -58,21 +59,21 @@ export function BroadTimestamp({ timestamp }: { timestamp: number }) {
   );
 }
 
-function timestampToTimeString(timestamp: number): string {
+function timestampToTimeString(timestamp) {
   const date = new Date(timestamp);
   return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 }
 
-export function FineTimestamp({ name, timestamp, rightSide }: { name: string; timestamp: number; rightSide: boolean }) {
+export function FineTimestamp({ name, timestamp, rightSide }) {
   return (
-    <p className={`m-2 mt-0 text-md font-semibold ${rightSide ? 'text-right' : ''}`}>
+    <p classname={`m-2 mt-0 text-md font-semibold ${rightSide ? 'text-right' : ''}`}>
       { rightSide ? (
         <>
-          <span className="text-sm text-gray-500 mt-1">{ timestampToTimeString(timestamp) } &middot;</span> { name }
+          <span classname="text-sm text-gray-500 mt-1">{ timestampToTimeString(timestamp) } &middot;</span> { name }
         </>
       ) : (
         <>
-          { name } <span className="text-sm text-gray-500 mt-1">&middot; { timestampToTimeString(timestamp) }</span>
+          { name } <span classname="text-sm text-gray-500 mt-1">&middot; { timestampToTimeString(timestamp) }</span>
         </>
       )}
     </p>
@@ -80,7 +81,7 @@ export function FineTimestamp({ name, timestamp, rightSide }: { name: string; ti
 }
 
 export function ChatInput() {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef(null);
   const [markdownShowing, setMarkdownShowing] = useState(false);
 
   const adjustTextareaHeight = () => {
@@ -141,8 +142,8 @@ export function ChatInput() {
   );
 }
 
-export function ChatContainer({ messages, username }: { messages: Array<{ user: string, message: string, timestamp: number }>, username: string }) {
-  const messageGroups: Array<{ user: string, messages: Array<{ message: string, timestamp: number }> }> = [];
+export function ChatContainer({ messages, username }) {
+  const messageGroups = [];
 
   messages.forEach((message) => {
     const lastGroup = messageGroups[messageGroups.length - 1];
@@ -150,7 +151,7 @@ export function ChatContainer({ messages, username }: { messages: Array<{ user: 
       const lastMessage = lastGroup.messages[lastGroup.messages.length - 1];
       if ((message.timestamp - lastMessage.timestamp) < 10 * 60 * 1000) return lastGroup.messages.push({ message: message.message, timestamp: message.timestamp });
     }
-    messageGroups.push({ user: message.user, messages: [{ message: message.message, timestamp: message.timestamp }] });
+    messageGroups.push({ user: message.user, messages: [{ message: message.message, timestamp: message.timestamp }]});
   });
 
   return (

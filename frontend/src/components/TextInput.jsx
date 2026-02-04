@@ -1,6 +1,4 @@
-//textinput with label and placeholder
-
-export default function TextInput({ label, id, placeholder }: { label: string; id: string; placeholder: string }) {
+export default function TextInput({ label, id, placeholder }) {
   return (
     <>
       <label htmlFor={ id } className="ml-1 mt-4 block">{ label }</label>
