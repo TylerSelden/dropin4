@@ -1,4 +1,5 @@
 import type { Route } from "./+types/home";
+import { Link } from "react-router";
 import Logo from "../components/Logo.tsx";
 import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput, ChatContainer } from "../components/ChatComponents.tsx";
 
@@ -147,7 +148,7 @@ export default function Chat() {
   return (
     <>
       <header className="px-3 py-2 w-full bg-gray-800 flex justify-between sticky top-0 z-10 items-center">
-        <Logo />
+        <Link to="/"><Logo /></Link>
         <p className="flex items-center gap-1">
           <span className="w-3 h-3 bg-green-600 rounded-full animate-pulse"></span>
           Connected

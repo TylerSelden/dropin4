@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, Fragment } from 'react';
 import { IoIosSend } from 'react-icons/io';
 import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
@@ -159,7 +159,7 @@ export function ChatContainer({ messages, username }: { messages: Array<{ user: 
         const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).getDate() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).getDate());
         const rightSide = group.user === username;
         return (
-          <>
+          <Fragment key={groupIndex}>
             { broadTimestampNeeded && <BroadTimestamp timestamp={group.messages[0].timestamp} /> }
             <MessageGroup key={groupIndex} rightSide={rightSide}>
               { group.messages.map((message, messageIndex) => {
@@ -179,7 +179,7 @@ export function ChatContainer({ messages, username }: { messages: Array<{ user: 
               }) }
               <FineTimestamp name={group.user} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
             </MessageGroup>
-          </>
+          </Fragment>
         );
       }) }
     </main>
