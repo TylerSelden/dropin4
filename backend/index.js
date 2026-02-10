@@ -1,11 +1,33 @@
-import { WebSocketServer} from 'ws';
-import DB, { GetConfig, Info } from './src/db.js';
+import { Server } from 'socket.io';
+import DB, { GetConfig, Debug, Info, Err } from './src/db.js';
+import { Events } from './src/misc.js';
+import Joi from 'joi';
 
-const ws = new WebSocketServer({ port: GetConfig('port') });
+const io = new Server(GetConfig('port'), {
+  cors: {
+    origin: '*',
+  },
+  transports: ['websocket', 'polling']
+});
 
-ws.on('connection', (socket) => {
-  socket.on('message', (message) => {
-    console.log(`Received message: ${message.toString()}`);
+io.on('connection', (socket) => {
+  Debug(`New user connected: ${socket.id}`);
+
+  for (const [event, { schema, handler }] of Object.entries(Events)) {
+    socket.on(event, (message) => {
+      try {
+        Debug(`${event} event fired by ${socket.id}`);
+        Joi.assert(message, schema);
+        handler(socket, message);
+      } catch (err) {
+        Err(`Error handling event ${event} from ${socket.id}: ${err.message}`);
+        socket.emit('err', err.message);
+      }
+    });
+  }
+
+  socket.on('disconnect', () => {
+    Debug(`User disconnected: ${socket.id}`);
   });
 });
 

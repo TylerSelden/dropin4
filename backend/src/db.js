@@ -27,21 +27,20 @@ await DB.exec(`
   );
 
   CREATE TABLE IF NOT EXISTS rooms (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT PRIMARY KEY UNIQUE NOT NULL,
     created_at INTEGER NOT NULL,
     last_active_at INTEGER NOT NULL
   );
 
   CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    room_id INTEGER NOT NULL,
+    room INTEGER NOT NULL,
     username TEXT NOT NULL,
     message TEXT NOT NULL,
     timestamp INTEGER NOT NULL,
 
-    FOREIGN KEY (room_id) REFERENCES rooms(id)
-  );
+    FOREIGN KEY (room) REFERENCES rooms(name) ON DELETE CASCADE
+ );
 `);
 
 
@@ -84,7 +83,7 @@ async function createLog(message, level) {
 export function Debug(message) { createLog(message, 'debug') };
 export function Info(message) { createLog(message, 'info') };
 export function Warn(message) { createLog(message, 'warn') }
-export function Error(message) { createLog(message, 'error') }
+export function Err(message) { createLog(message, 'error') }
 
 const dbUpgrades = [
   null,
