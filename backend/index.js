@@ -14,14 +14,16 @@ io.on('connection', (socket) => {
   Debug(`New user connected: ${socket.id}`);
 
   for (const [event, { schema, handler }] of Object.entries(Events)) {
-    socket.on(event, (message) => {
+    socket.on(event, async (message) => {
       try {
         Debug(`${event} event fired by ${socket.id}`);
+
         Joi.assert(message, schema);
-        handler(socket, message);
+        await handler(io, socket, message);
       } catch (err) {
-        Err(`Error handling event ${event} from ${socket.id}: ${err.message}`);
-        socket.emit('err', err.message);
+        const details = err.details?.[0].message;
+        Err(`Error handling event ${event} from ${socket.id}: ${details || err.message}`);
+        socket.emit('err', details || 'An error occurred while processing your request');
       }
     });
   }
