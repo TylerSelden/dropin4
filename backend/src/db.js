@@ -17,7 +17,8 @@ await DB.exec(`
   INSERT OR IGNORE INTO config (key, value) VALUES
     ('port', '8080'),
     ('db_log_level', 'info'),
-    ('console_log_level', 'info');
+    ('console_log_level', 'info'),
+    ('max_message_length', '1000');
 
   CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,20 +27,12 @@ await DB.exec(`
     level TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS rooms (
-    name TEXT PRIMARY KEY UNIQUE NOT NULL,
-    created_at INTEGER NOT NULL,
-    last_active_at INTEGER NOT NULL
-  );
-
   CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     room INTEGER NOT NULL,
     username TEXT NOT NULL,
-    message TEXT NOT NULL,
-    timestamp INTEGER NOT NULL,
-
-    FOREIGN KEY (room) REFERENCES rooms(name) ON DELETE CASCADE
+    content TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
  );
 `);
 
@@ -91,7 +84,10 @@ const dbUpgrades = [
     DB.exec(`DELETE FROM config WHERE key = 'log_level'`);
   },
   () => {
-    DB.exec(`DROP TABLE users`);
+    DB.exec('DROP TABLE users');
+  },
+  () => {
+    DB.exec('DROP TABLE rooms');
   }
 ];
 
