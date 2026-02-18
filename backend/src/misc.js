@@ -16,32 +16,29 @@ const schemas = {
 };
 
 export const Events = {
-  username: {
-    schema: schemas.name.label('Username'),
-    handler: async (io, socket, message) => {
-      if (socket.data.username) throw new Error('Username already set');
-      if ([...io.sockets.sockets.values()].some(s => s.data.username === message)) throw new Error('Username already taken');
-
-      socket.data.username = message;
-      Debug(`User ${socket.id} set username to: ${message}`);
-    }
-  },
   subscribe: {
-    schema: schemas.name.label('Room Code'),
+    schema: Joi.object({
+      room: schemas.name.label('Room Code'),
+      username: schemas.name.label('Username')
+    }).label('Request Object').required(),
     handler: async (io, socket, message) => {
-      if (!socket.data.username) throw new Error('Username must be set');
-      socket.join(message);
+      const { room, username } = message;
+      if ([...io.sockets.sockets.values()].some(s => s.rooms.has(room) && s.data.username[room] === username)) throw new Error('Username already taken in this room');
+      socket.data.username[room] = username;
+      socket.join(room);
 
-      console.log(await DB.all('SELECT * FROM messages WHERE room = ? ORDER BY timestamp ASC LIMIT 50', [message]));
+      // TODO: figure out how to send more than 50 messages with OFFSET
+      if (!room.startsWith('!')) socket.emit('messages', await DB.all('SELECT * FROM messages WHERE room = ? ORDER BY timestamp ASC LIMIT 50', [room]));
 
-      Debug(`User ${socket.id} subscribed to room: ${message}`);
+      Debug(`User ${socket.id} subscribed to room: ${room} with username: ${username}`);
     }
   },
   unsubscribe: {
     schema: schemas.name.label('Room Code'),
     handler: async (io, socket, message) => {
+      delete socket.data.username[message];
       socket.leave(message);
-      Debug(`User ${socket.id} unsubscribed from room: ${message}`);
+      Debug(`User ${socket.id} unsubscribed from room: ${message} with username: ${socket.data.username[message]}`);
     }
   },
   message: {
@@ -50,13 +47,13 @@ export const Events = {
       content: schemas.message.label('Message')
     }).label('Request Object').required(),
     handler: async (io, socket, message) => {
-      if (!socket.data.username) throw new Error('Username must be set');
-      if (!socket.rooms.has(message.room)) throw new Error('Must be subscribed to room to send messages');
       const { room, content } = message;
+      if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to send messages');
       const timestamp = Date.now();
+      const username = socket.data.username[room];
 
-      await DB.run('INSERT INTO messages (room, username, content, timestamp) VALUES (?, ?, ?, ?)', [room, socket.data.username, content, timestamp]);
-      io.to(room).emit('message', { room, username: socket.data.username, content, timestamp });
+      await DB.run('INSERT INTO messages (room, username, content, timestamp) VALUES (?, ?, ?, ?)', [room, username, content, timestamp]);
+      io.to(room).emit('message', { room, username, content, timestamp });
       Debug(`User ${socket.id} sent message to room ${room}: ${content}`);
     }
   }
@@ -65,8 +62,7 @@ export const Events = {
 /*
   Events:
     // set self username
-    - username: If the client doesn't already have a username, they can set one. This is required before subscribing to a room and sending messages.
-    - subscribe: Joins a room, creates if it doesn't exist, and sends previous messages in that room
+    - subscribe: Joins a room with a username, creates if it doesn't exist, and sends previous messages in that room
     - unsubscribe: Leaves a room
     - message: Sends a message to a given room, saves it to db, and broadcasts it to ALL clients in the room (including sender)
 */
