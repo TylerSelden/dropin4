@@ -14,8 +14,8 @@ export default function Home() {
       </div>
 
       <div className="mt-8">
-        <TextInput label="Room Code" id="test" placeholder="Enter room code" />
         <TextInput label="Username" id="username" placeholder="Your display name" />
+        <TextInput label="Room Code" id="room" placeholder="Enter room code" />
         <p className="ml-1 mt-1 text-sm text-gray-500">
           Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
