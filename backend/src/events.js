@@ -1,23 +1,5 @@
 import DB, { GetConfig, Err, Debug } from './db.js';
-import Joi from 'joi';
-
-const joiMessages = {
-  'string.base': '{{#label}} must be a string',
-  'string.empty': '{{#label}} cannot be empty',
-  'string.pattern.base': '{{#label}} contains invalid characters',
-  'string.min': '{{#label}} must be at least {#limit} characters',
-  'string.max': '{{#label}} cannot exceed {#limit} characters',
-  'number.base': '{{#label}} must be a number',
-  'number.min': '{{#label}} must be at least {#limit}',
-  'object.base': '{{#label}} must be an object',
-  'any.required': '{{#label}} is required'
-};
-
-const schemas = {
-  name: Joi.string().pattern(/^[a-zA-Z0-9_@!\-.]+$/).min(3).max(64).required().messages(joiMessages),
-  message: Joi.string().min(1).required().messages(joiMessages),
-  timestamp: Joi.number().min(0).required().messages(joiMessages)
-};
+import { Schemas } from '../../shared/schemas.js';
 
 function getPage(room, before) {
   if (!before) before = Date.now() + 1000; // A small margin of error
@@ -28,10 +10,7 @@ function getPage(room, before) {
 
 export const Events = {
   subscribe: {
-    schema: Joi.object({
-      room: schemas.name.label('Room Code'),
-      username: schemas.name.label('Username')
-    }).label('Request Object').required(),
+    schema: Schemas.subscribe,
     handler: async (io, socket, message) => {
       const { room, username } = message;
       if ([...io.sockets.sockets.values()].some(s => s.rooms.has(room) && s.data.username[room] === username)) throw new Error('Username already taken in this room');
@@ -47,7 +26,7 @@ export const Events = {
     }
   },
   unsubscribe: {
-    schema: schemas.name.label('Room Code'),
+    schema: Schemas.name,
     handler: async (io, socket, message) => {
       delete socket.data.username[message];
       socket.leave(message);
@@ -55,10 +34,7 @@ export const Events = {
     }
   },
   page: {
-    schema: Joi.object({
-      room: schemas.name.label('Room Code'),
-      timestamp: schemas.timestamp.label('Timestamp')
-    }).label('Request Object').required(),
+    Schema: Schemas.page,
     handler: async (io, socket, message) => {
       const { room, timestamp } = message;
       if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to request messages');
@@ -70,10 +46,7 @@ export const Events = {
     }
   },
   message: {
-    schema: Joi.object({
-      room: schemas.name.label('Room Code'),
-      content: schemas.message.max(parseInt(GetConfig('max_message_length'))).label('Message')
-    }).label('Request Object').required(),
+    schema: Schemas.message,
     handler: async (io, socket, message) => {
       const { room, content } = message;
       if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to send messages');

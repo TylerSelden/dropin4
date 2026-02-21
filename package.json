@@ -1,0 +1,12 @@
+{
+  "name": "dropin",
+  "type": "module",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "shared"
+  ],
+  "dependencies": {
+    "joi": "^18.0.2"
+  }
+}

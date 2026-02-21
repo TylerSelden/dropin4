@@ -10,8 +10,8 @@ export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop
       max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert
       ${rightSide ? 'from-violet-800 to-violet-900 bg-[length:32rem] rounded-br-none' : 'from-gray-800 to-gray-700 bg-[length:48rem] rounded-bl-none' }
       ${attachedTop ? 'rounded-t-none' : 'mt-2'}
-      ${attachedBottom ? 'rounded-b-none' : ''}
-      ${spaceTop ? 'mt-2' : ''}
+      ${attachedBottom && 'rounded-b-none'}
+      ${spaceTop && 'mt-2'}
     `}
       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(text)) }}
     >
@@ -65,7 +65,7 @@ function timestampToTimeString(timestamp) {
 
 export function FineTimestamp({ name, timestamp, rightSide }) {
   return (
-    <p className={`m-2 mt-0 text-md font-semibold ${rightSide ? 'text-right' : ''}`}>
+    <p className={`m-2 mt-0 text-md font-semibold ${rightSide && 'text-right'}`}>
       { rightSide ? (
         <>
           <span className="text-sm text-gray-500 mt-1">{ timestampToTimeString(timestamp) } &middot;</span> { name }
@@ -113,7 +113,7 @@ export function ChatInput() {
   return (
     <footer className="p-3 w-full max-w-screen fixed bottom-0 flex justify-center pointer-events-none">
       <div className="relative w-4xl max-w-full flex items-end pointer-events-auto">
-        <div className={`w-full overflow-y-scroll max-h-[80dvh] rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${markdownShowing ? '' : 'hidden'}`}>
+        <div className={`w-full overflow-y-scroll max-h-[80dvh] rounded-[25px] min-h-[50px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 z-10 ${!markdownShowing && 'hidden'}`}>
           <div
             className="w-full max-w-none break-words prose prose-invert"
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(textareaRef.current?.value || '')) }}
@@ -121,7 +121,7 @@ export function ChatInput() {
         </div>
 
         <textarea
-          className={`w-full resize-none max-h-[80dvh] overflow-scroll rounded-[25px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 outline-none focus:ring-1 focus:ring-violet-600 z-10 ${markdownShowing ? 'hidden' : ''}`}
+          className={`w-full resize-none max-h-[80dvh] overflow-scroll rounded-[25px] p-3 pl-5 pr-21 bg-gray-800 border border-gray-600 outline-none focus:ring-1 focus:ring-violet-600 z-10 ${markdownShowing && 'hidden'}`}
           rows={1}
           ref={textareaRef}
           placeholder="Type your message..."

@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import ContentContainer from "../components/ContentContainer";
 import Logo from "../components/Logo";
 import TextInput from "../components/TextInput";
@@ -6,7 +7,14 @@ import { PiLightning } from "react-icons/pi";
 import { GoLock } from "react-icons/go";
 import { FiEyeOff } from "react-icons/fi";
 
+import { Schemas, Validate } from "../../../shared/schemas";
+
 export default function Home() {
+  const usernameRef = useRef();
+  const roomRef = useRef();
+  const [usernameErr, setUsernameErr] = useState();
+  const [roomErr, setRoomErr] = useState();
+
   return (
     <ContentContainer>
       <div className="flex justify-center">
@@ -14,12 +22,29 @@ export default function Home() {
       </div>
 
       <div className="mt-8">
-        <TextInput label="Username" id="username" placeholder="Your display name" />
-        <TextInput label="Room Code" id="room" placeholder="Enter room code" />
+        <TextInput label="Username" id="username" placeholder="Your display name" inputRef={ usernameRef } err={ usernameErr } />
+        <TextInput label="Room Code" id="room" placeholder="Enter room code" inputRef={ roomRef } err={ roomErr } />
         <p className="ml-1 mt-1 text-sm text-gray-500">
           Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
-        <button className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 transition-colors">Join</button>
+        <button
+          className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 transition-colors"
+          onClick={() => {
+            const errs = [
+              Validate(Schemas.name, "Username", usernameRef.current.value),
+              Validate(Schemas.name, "Room Code", roomRef.current.value)
+            ];
+            setUsernameErr(errs[0]);
+            setRoomErr(errs[1]);
+
+            if (errs[0] || errs[1]) return;
+
+            // TODO
+            alert("yo good");
+          }}
+        >
+          Join
+        </button>
       </div>
 
       <hr className="my-8 border-gray-600" />

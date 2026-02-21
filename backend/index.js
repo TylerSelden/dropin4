@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import DB, { GetConfig, Debug, Info, Err } from './src/db.js';
-import { Events } from './src/misc.js';
-import Joi from 'joi';
+import { Events } from './src/events.js';
+import { Assert } from '../shared/schemas.js';
 
 const io = new Server(GetConfig('port'), {
   cors: {
@@ -19,7 +19,8 @@ io.on('connection', (socket) => {
       try {
         Debug(`${event} event fired by ${socket.id}`);
 
-        Joi.assert(message, schema);
+        const label = schema.describe().flags?.label || 'Request Object';
+        Assert(schema, label, message);
         await handler(io, socket, message);
         if (ack) ack();
       } catch (err) {
