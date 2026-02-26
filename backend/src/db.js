@@ -6,7 +6,6 @@ const DB = await open({
   driver: sqlite3.Database
 });
 
-// TODO: db schema version upgrades
 await DB.exec(`
   PRAGMA journal_mode = WAL;
 

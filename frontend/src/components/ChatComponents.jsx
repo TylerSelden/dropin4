@@ -3,6 +3,21 @@ import { IoIosSend } from 'react-icons/io';
 import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
+import { UseSocket } from './SocketContext';
+import { Schemas, Validate } from '../../../shared/schemas';
+
+// TODO: Verify code written today, add reconnect functionality, boot user from /chat if they aren't actually in a room, localStorage on home menu, and paging
+/*
+  TODO:
+    - Verify code written in this diff
+    - Add reconnect functionality
+    - Boot user from /chat if they aren't actually in a room
+    - localStorage on home menu
+    - Paging (load more messages when scrolling up)
+    - Fix textarea flickering and incorrect positioning while typing / resizing on mobile
+    - Smooth Scrolling on new messages
+    - Spacing that's less ugly
+*/
 
 export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }) {
   return (
@@ -80,18 +95,33 @@ export function FineTimestamp({ name, timestamp, rightSide }) {
 }
 
 export function ChatInput() {
+  const { socket, currentRoom } = UseSocket();
   const textareaRef = useRef(null);
   const [markdownShowing, setMarkdownShowing] = useState(false);
 
-  const adjustTextareaHeight = () => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      const scrollY = window.scrollY;
-      const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 20;
-      textarea.style.height = "auto";
-      textarea.style.height = textarea.scrollHeight + 2 + "px"; // +2 for border
-      scrollTo(0, atBottom ? document.body.scrollHeight : scrollY);
+  const send = () => {
+    const message = {
+      room: currentRoom,
+      content: textareaRef.current.value.trim()
     }
+    const err = Validate(Schemas.message, "Message", message);
+    if (!err) {
+      socket.emit("message", message);
+      textareaRef.current.value = "";
+      setMarkdownShowing(false);
+      adjustTextareaHeight();
+    }
+  };
+
+  const adjustTextareaHeight = (evt) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const scrollY = window.scrollY;
+    const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 20;
+    textarea.style.height = "auto";
+    textarea.style.height = textarea.scrollHeight + 2 + "px"; // +2 for border
+    scrollTo(0, atBottom ? document.body.scrollHeight : scrollY);
   };
 
   useEffect(() => {
@@ -125,14 +155,23 @@ export function ChatInput() {
           rows={1}
           ref={textareaRef}
           placeholder="Type your message..."
-          onInput={adjustTextareaHeight}
+          onKeyDown={(evt) => {
+            if (evt.key === "Enter" && !evt.shiftKey) {
+              evt.preventDefault();
+              send();
+            }
+          }}
+          onInput={ adjustTextareaHeight }
         ></textarea>
 
         <div className="absolute left-0 bottom-0 h-[50px] w-full flex items-center justify-end">
           <button className={`mr-2 rounded-3/4 hover:text-gray-300 active:text-gray-500 transition-colors z-15 text-${markdownShowing ? 'gray-300' : 'gray-500'}`} onClick={() => setMarkdownShowing(!markdownShowing)}>
             <BsFillMarkdownFill size={28} />
           </button>
-          <button className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-600 active:bg-violet-800 transition-colors z-15">
+          <button
+            className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-800 active:bg-violet-900 transition-colors z-15"
+            onClick={ () => send() }
+          >
             <IoIosSend size={24} />
           </button>
         </div>
@@ -143,21 +182,22 @@ export function ChatInput() {
 
 export function ChatContainer({ messages, username }) {
   const messageGroups = [];
+  messages.sort((a, b) => a.timestamp - b.timestamp);
 
   messages.forEach((message) => {
     const lastGroup = messageGroups[messageGroups.length - 1];
-    if (lastGroup && lastGroup.user === message.user) {
+    if (lastGroup && lastGroup.username === message.username) {
       const lastMessage = lastGroup.messages[lastGroup.messages.length - 1];
-      if ((message.timestamp - lastMessage.timestamp) < 10 * 60 * 1000) return lastGroup.messages.push({ message: message.message, timestamp: message.timestamp });
+      if ((message.timestamp - lastMessage.timestamp) < 10 * 60 * 1000) return lastGroup.messages.push({ content: message.content, timestamp: message.timestamp });
     }
-    messageGroups.push({ user: message.user, messages: [{ message: message.message, timestamp: message.timestamp }] });
+    messageGroups.push({ username: message.username, messages: [{ content: message.content, timestamp: message.timestamp }] });
   });
 
   return (
     <main className="px-4 pb-15">
       { messageGroups.map((group, groupIndex) => {
         const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).getDate() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).getDate());
-        const rightSide = group.user === username;
+        const rightSide = group.username === username;
         return (
           <Fragment key={groupIndex}>
             { broadTimestampNeeded && <BroadTimestamp timestamp={group.messages[0].timestamp} /> }
@@ -169,7 +209,7 @@ export function ChatContainer({ messages, username }) {
                 return (
                   <Message
                     key={messageIndex}
-                    text={message.message}
+                    text={message.content}
                     rightSide={rightSide}
                     attachedTop={attachedTop}
                     attachedBottom={attachedBottom}
@@ -177,7 +217,7 @@ export function ChatContainer({ messages, username }) {
                   />
                 );
               }) }
-              <FineTimestamp name={group.user} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
+              <FineTimestamp name={group.username} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
             </MessageGroup>
           </Fragment>
         );

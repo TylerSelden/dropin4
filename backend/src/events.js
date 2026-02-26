@@ -19,7 +19,8 @@ export const Events = {
 
       if (!room.startsWith('!')) {
         const messages = await getPage(room);
-        socket.emit('page', { room, messages });
+        const username = socket.data.username[room];
+        socket.emit('page', { room, username, messages });
       }
 
       Debug(`User ${socket.id} subscribed to room: ${room} with username: ${username}`);
@@ -40,7 +41,8 @@ export const Events = {
       if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to request messages');
       if (room.startsWith('!')) throw new Error('Cannot request messages for non-persistent rooms');
       const messages = await getPage(room, timestamp);
-      socket.emit('page', { room, messages });
+      const username = socket.data.username[room];
+      socket.emit('page', { room, username, messages });
       Debug(`User ${socket.id} requested page for room: ${room} before timestamp: ${timestamp}`);
 
     }

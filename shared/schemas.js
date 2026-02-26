@@ -14,7 +14,7 @@ const joiMessages = {
 
 export const Schemas = {
   name: Joi.string().pattern(/^[a-zA-Z0-9_@!\-.]+$/).min(3).max(64).required().messages(joiMessages),
-  message: Joi.string().min(1).required().messages(joiMessages),
+  messageContent: Joi.string().min(1).required().messages(joiMessages),
   timestamp: Joi.number().min(0).required().messages(joiMessages)
 };
 
@@ -30,7 +30,7 @@ Schemas.page = Joi.object({
 
 Schemas.message = Joi.object({
   room: Schemas.name.label('Room Code'),
-  content: Schemas.message.label('Message Content')
+  content: Schemas.messageContent.label('Message Content')
 }).required().messages(joiMessages);
 
 const options = { errors: { wrap: { label: '' } } };

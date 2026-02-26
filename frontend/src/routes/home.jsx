@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ContentContainer from "../components/ContentContainer";
 import Logo from "../components/Logo";
 import TextInput from "../components/TextInput";
@@ -8,12 +9,15 @@ import { GoLock } from "react-icons/go";
 import { FiEyeOff } from "react-icons/fi";
 
 import { Schemas, Validate } from "../../../shared/schemas";
+import { UseSocket } from "../components/SocketContext";
 
 export default function Home() {
   const usernameRef = useRef();
   const roomRef = useRef();
+  const nav = useNavigate();
   const [usernameErr, setUsernameErr] = useState();
   const [roomErr, setRoomErr] = useState();
+  const { socket } = UseSocket();
 
   return (
     <ContentContainer>
@@ -28,7 +32,7 @@ export default function Home() {
           Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
         <button
-          className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 transition-colors"
+          className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 active:bg-violet-900 transition-colors"
           onClick={() => {
             const errs = [
               Validate(Schemas.name, "Username", usernameRef.current.value),
@@ -39,8 +43,12 @@ export default function Home() {
 
             if (errs[0] || errs[1]) return;
 
-            // TODO
-            alert("yo good");
+            socket.emit("subscribe", {
+              room: roomRef.current.value,
+              username: usernameRef.current.value
+            }, () => {
+              nav("/chat");
+            });
           }}
         >
           Join
@@ -67,7 +75,7 @@ export default function Home() {
 
       <footer className="mt-8 text-gray-500 text-sm text-center">
         <hr className="mb-4 border-gray-600" />
-        &copy; {new Date().getFullYear()} DropIn Chat. All rights reserved.
+        &copy; { new Date().getFullYear() } DropIn Chat. All rights reserved.
       </footer>
     </ContentContainer>
   );
