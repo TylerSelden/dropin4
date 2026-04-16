@@ -9,20 +9,23 @@ import { Schemas, Validate } from '../../../shared/schemas';
 // TODO: Verify code written today, add reconnect functionality, boot user from /chat if they aren't actually in a room, localStorage on home menu, and paging
 /*
   TODO:
-    - Verify code written in this diff
-    - Add reconnect functionality
-    - Boot user from /chat if they aren't actually in a room
+    - Multiple rooms functionality
+      - Add reconnect functionality
     - localStorage on home menu
     - Paging (load more messages when scrolling up)
     - Fix textarea flickering and incorrect positioning while typing / resizing on mobile
     - Smooth Scrolling on new messages
     - Spacing that's less ugly
+    - Admin panel
+      - R/D users
+      - R/D rooms
+      - R/W/D popup messages
 */
 
 export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }) {
   return (
     <div className={`
-      max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert
+      max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert break-words
       ${rightSide ? 'from-violet-800 to-violet-900 bg-[length:32rem] rounded-br-none' : 'from-gray-800 to-gray-700 bg-[length:48rem] rounded-bl-none' }
       ${attachedTop ? 'rounded-t-none' : 'mt-2'}
       ${attachedBottom && 'rounded-b-none'}
