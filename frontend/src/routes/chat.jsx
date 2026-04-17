@@ -1,16 +1,20 @@
 import { Link } from "react-router";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Logo from "../components/Logo";
 import { Message, MessageGroup, BroadTimestamp, FineTimestamp, ChatInput, ChatContainer } from "../components/ChatComponents";
 import { UseSocket } from "../components/SocketContext";
 
+import Spinner from "../components/Spinner";
+
 export default function Chat() {
   const { status, messages, currentRoom, currentUsername } = UseSocket();
-  const nav = useNavigate();
-
   if (!currentRoom) {
-    nav("/");
-    return null;
+    return (
+      <>
+        <Spinner />
+        <Navigate to="/" />
+      </>
+    );
   }
 
   return (
