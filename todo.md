@@ -26,6 +26,7 @@
 - [ ] Better contrast in `!` message in home menu
   - [ ] ~Change the `!` to use the markdown library?~
 - [ ] Change checkmark color to be deeper
+- [ ] Convert `connected` element to a badge
 
 ### Post-beta launch:
 
