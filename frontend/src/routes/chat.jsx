@@ -18,7 +18,7 @@ export default function Chat() {
   }
 
   return (
-    <>
+    <div className="flex h-dvh flex-col">
       <header className="px-3 py-2 w-full bg-gray-800 flex justify-between sticky top-0 z-10 items-center">
         <Link to="/"><Logo /></Link>
         <p className="flex items-center gap-1">
@@ -30,6 +30,6 @@ export default function Chat() {
       <ChatContainer messages={ messages } username={ currentUsername } />
 
       <ChatInput />
-    </>
+    </div>
   );
 }

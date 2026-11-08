@@ -7,12 +7,11 @@ export function SocketProvider({ children }) {
   const [socket, setSocket] = useState();
   const [status, setStatus] = useState("Disconnected");
   const [messages, setMessages] = useState([]);
-  // FIXME: Allow for multiple rooms in future builds
   const [currentRoom, setCurrentRoom] = useState(null);
   const [currentUsername, setCurrentUsername] = useState(null);
 
   useEffect(() => {
-    const s = io("https://backend.benti.dev:444", {
+    const s = io(import.meta.env.VITE_SOCKET_URL, {
       transports: ["websocket", "polling"],
       reconnection: true,
       reconnectionAttempts: Infinity,

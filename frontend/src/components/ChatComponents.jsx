@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, Fragment } from 'react';
+import { useRef, useEffect, useLayoutEffect, useState, Fragment } from 'react';
 import { IoIosSend } from 'react-icons/io';
 import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
@@ -15,21 +15,15 @@ import { Schemas, Validate } from '../../../shared/schemas';
     - Paging (load more messages when scrolling up)
     - Fix textarea flickering and incorrect positioning while typing / resizing on mobile
     - Smooth Scrolling on new messages
-    - Spacing that's less ugly
-    - Admin panel
-      - R/D users
-      - R/D rooms
-      - R/W/D popup messages
 */
 
-export function Message({ text, rightSide, attachedTop, attachedBottom, spaceTop }) {
+export function Message({ text, rightSide, attachedTop, attachedBottom }) {
   return (
     <div className={`
       max-w-sm px-4 py-3 bg-gradient-to-r rounded-xl prose prose-invert break-words
       ${rightSide ? 'from-violet-800 to-violet-900 bg-[length:32rem] rounded-br-none' : 'from-gray-800 to-gray-700 bg-[length:48rem] rounded-bl-none' }
       ${attachedTop ? 'rounded-t-none' : 'mt-2'}
       ${attachedBottom && 'rounded-b-none'}
-      ${spaceTop && 'mt-2'}
     `}
       dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(text)) }}
     >
@@ -83,7 +77,7 @@ function timestampToTimeString(timestamp) {
 
 export function FineTimestamp({ name, timestamp, rightSide }) {
   return (
-    <p className={`m-2 mt-0 text-md font-semibold ${rightSide && 'text-right'}`}>
+    <p className={`m-2 mt-0 text-md truncate font-semibold ${rightSide && 'text-right'}`}>
       { rightSide ? (
         <>
           <span className="text-sm text-gray-500 mt-1">{ timestampToTimeString(timestamp) } &middot;</span> { name }
@@ -184,20 +178,35 @@ export function ChatInput() {
 }
 
 export function ChatContainer({ messages, username }) {
+  const chatRef = useRef(null);
+  const wasAtBottom = useRef(true);
+
+  const handleScroll = () => {
+    const chat = chatRef.current;
+    if (!chat) return;
+    wasAtBottom.current = (chat.scrollHeight - chat.scrollTop - chat.clientHeight) < 50;
+  }
+
+  useLayoutEffect(() => {
+    const chat = chatRef.current;
+    if (!chat) return;
+    if (wasAtBottom.current) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+  }, [messages]);
+
   const messageGroups = [];
   messages.sort((a, b) => a.timestamp - b.timestamp);
 
   messages.forEach((message) => {
     const lastGroup = messageGroups[messageGroups.length - 1];
     if (lastGroup && lastGroup.username === message.username) {
-      const lastMessage = lastGroup.messages[lastGroup.messages.length - 1];
-      if ((message.timestamp - lastMessage.timestamp) < 10 * 60 * 1000) return lastGroup.messages.push({ content: message.content, timestamp: message.timestamp });
+      const firstGroupMessage = lastGroup.messages[0];
+      if ((message.timestamp - firstGroupMessage.timestamp) < 5 * 60 * 1000) return lastGroup.messages.push({ content: message.content, timestamp: message.timestamp });
     }
     messageGroups.push({ username: message.username, messages: [{ content: message.content, timestamp: message.timestamp }] });
   });
 
   return (
-    <main className="px-4 pb-15">
+    <main className="px-4 pb-20 min-h-0 overflow-y-auto" ref={ chatRef } onScroll={ handleScroll }>
       { messageGroups.map((group, groupIndex) => {
         const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).getDate() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).getDate());
         const rightSide = group.username === username;
@@ -208,7 +217,6 @@ export function ChatContainer({ messages, username }) {
               { group.messages.map((message, messageIndex) => {
                 const attachedTop = messageIndex > 0;
                 const attachedBottom = messageIndex < group.messages.length - 1;
-                const spaceTop = messageIndex > 0 && (message.timestamp - group.messages[messageIndex - 1].timestamp) > 5 * 60 * 1000;
                 return (
                   <Message
                     key={messageIndex}
@@ -216,12 +224,11 @@ export function ChatContainer({ messages, username }) {
                     rightSide={rightSide}
                     attachedTop={attachedTop}
                     attachedBottom={attachedBottom}
-                    spaceTop={spaceTop}
                   />
                 );
               }) }
-              <FineTimestamp name={group.username} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
             </MessageGroup>
+            <FineTimestamp name={group.username} timestamp={group.messages[group.messages.length - 1].timestamp} rightSide={rightSide} />
           </Fragment>
         );
       }) }

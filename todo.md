@@ -16,23 +16,26 @@
 - [ ] Paging (load more messages when scrolling up)
 - [ ] Fix textarea flickering and incorrect positioning while typing / resizing on mobile
 - [ ] Smooth Scrolling on new messages
-- [ ] Spacing that's less ugly
-  - [ ] Fix spacing issues when username width exceeds message width
-- [ ] Add `Beta` badge to the title
-- [ ] Add settings menu
+- [X] Spacing that's less ugly
+- [X] Fix spacing issues when username width exceeds message width
+- [X] Add `Beta` badge to the title
 - [ ] Add the chat name at the top
-- [ ] Make username size larger
+- [X] Make username size larger
 - [ ] Replay connection logic after a reconnect
-- [ ] Better contrast in `!` message in home menu
-  - [ ] ~Change the `!` to use the markdown library?~
-- [ ] Change checkmark color to be deeper
-- [ ] Convert `connected` element to a badge
+- [ ] Add max stored messages for rooms (server-side)
+- [ ] Max message age (and daily pruning routine)
+- [!] Better contrast in `!` message in home menu
+  - [X] ~~Change the `!` to use the markdown library?~~
+- [X] ~~Change checkmark color to be deeper~~
+- [X] ~~Convert `connected` element to a badge~~
+- [ ] HOSTING STATIC WEB FILES FOR `npm start`!
 
 ### Post-beta launch:
 
+- [ ] Add settings menu if need arises
 - [ ] Multiple rooms functionality
-  - [ ] Add reconnect functionality
-- [ ] Admin panel
-  - [ ] R/D users
-  - [ ] R/W/D rooms
-  - [ ] R/W/D popup messages
+  - [ ] Add reconnect functionality for multiple rooms
+- [X] ~~Admin panel~~
+  - [X] ~~R/D users~~
+  - [X] ~~R/W/D rooms~~
+  - [X] ~~R/W/D popup messages~~

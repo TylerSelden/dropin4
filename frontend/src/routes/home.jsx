@@ -103,7 +103,7 @@ export default function Home() {
           err={ roomErr }
         />
         <p className="ml-1 mt-1 text-sm text-gray-500">
-          Add <span className="bg-gray-700 px-1 rounded">!</span> prefix for non-persistent rooms
+          Add <span className="bg-gray-700 text-gray-400 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
         <button
           className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 active:bg-violet-900 transition-colors cursor-pointer"

@@ -3,7 +3,7 @@ import { Schemas } from '../../shared/schemas.js';
 
 function getPage(room, before) {
   if (!before) before = Date.now() + 1000; // A small margin of error
-  const limit = GetConfig('messages_per_page') || 50;
+  const limit = GetConfig('messages_per_page') || 5;
   const query = 'SELECT * FROM messages WHERE room = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT ?';
   return DB.all(query, [room, before, limit]);
 }
@@ -52,6 +52,7 @@ export const Events = {
     handler: async (io, socket, message) => {
       const { room, content } = message;
       if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to send messages');
+      if (content.length === 0 || content.length > GetConfig('max_message_length')) throw new Error('Message length is invalid');
       const timestamp = Date.now();
       const username = socket.data.username[room];
 
