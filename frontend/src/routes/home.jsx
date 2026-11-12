@@ -17,7 +17,7 @@ export default function Home() {
   const nav = useNavigate();
   const [usernameErr, setUsernameErr] = useState();
   const [roomErr, setRoomErr] = useState();
-  const { socket } = UseSocket();
+  const { socket, status } = UseSocket();
 
   const [prevRooms, setPrevRooms] = useState(() => {
     return JSON.parse(localStorage.getItem("dropin-prevRooms") || "[]");
@@ -107,9 +107,14 @@ export default function Home() {
           Add <span className="bg-gray-700 text-gray-400 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
         <button
-          className="w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md hover:bg-violet-800 active:bg-violet-900 transition-colors cursor-pointer"
-          onClick={ join }>
-          Join
+          className={`
+            w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md transition-colors
+            ${ status === "Connected" ? "hover:bg-violet-800 active:bg-violet-900 cursor-pointer" : "opacity-50 cursor-default"}
+            `}
+          onClick={ join }
+          disabled={ status !== "Connected" }
+        >
+          { status === "Connected" ? "Join" : "Connecting..." }
         </button>
       </div>
 

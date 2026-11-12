@@ -23,12 +23,11 @@
 - [X] Add `Beta` badge to the title
 - [X] ~~Add the chat name at the top~~ (security purposes)
 - [X] ~~Rate Limits~~ (should be handled by the host)
-- [ ] Add an npm format script that prettifies and searches for unused code
 - [X] Make username size larger
 - [X] Replay connection logic after a reconnect
 - [X] Migrate db config options to .env or something
   - [X] Remove traces in the code
-- [ ] Join button disabled when disconnected to server, or loading icon when connecting
+- [X] Join button disabled when disconnected to server
 - [X] Non-persistent rooms
 - [X] Max message age (and daily pruning routine)
 - [X] Better contrast in `!` message in home menu
@@ -36,6 +35,7 @@
 - [X] ~~Change checkmark color to be deeper~~
 - [X] Dev .env files
 - [X] ~~Convert `connected` element to a badge~~
+- [ ] Add an npm format script that prettifies and searches for unused code
 - [ ] package.json build script (add build dir to gitignore)
 - [ ] package.json start script (have it make sure there's an existing build)
 - [ ] Dockerfile and docker-compose.yml
