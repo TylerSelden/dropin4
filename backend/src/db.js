@@ -13,11 +13,6 @@ await DB.exec(`
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
-  INSERT OR IGNORE INTO config (key, value) VALUES
-    ('port', '8080'),
-    ('db_log_level', 'info'),
-    ('console_log_level', 'info'),
-    ('max_message_length', '1000');
 
   CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,36 +23,19 @@ await DB.exec(`
 
   CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    room INTEGER NOT NULL,
+    room TEXT NOT NULL,
     username TEXT NOT NULL,
     content TEXT NOT NULL,
     timestamp INTEGER NOT NULL
  );
 `);
 
-
-const configCache = await DB.all('SELECT key, value FROM config').then(rows => {
-  const cache = {};
-  rows.forEach(row => {
-    cache[row.key] = row.value;
-  });
-  return cache;
-});
-export function GetConfig(key) {
-  return configCache[key];
-}
-
-export function SetConfig(key, value) {
-  configCache[key] = value;
-  return DB.run('INSERT OR REPLACE INTO config (key, value) VALUES (?, ?)', key, value);
-}
-
 const logLevels = ['debug', 'info', 'warn', 'error'];
 async function createLog(message, level) {
   const timestamp = Date.now();
   const finalLog = `[${new Date(timestamp).toISOString()}] [${level.toUpperCase()}] ${message}`;
-  const logToConsole = logLevels.indexOf(level) >= logLevels.indexOf(GetConfig('console_log_level'));
-  const logToDB = logLevels.indexOf(level) >= logLevels.indexOf(GetConfig('db_log_level'));
+  const logToConsole = logLevels.indexOf(level) >= logLevels.indexOf(process.env.CONSOLE_LOG_LEVEL || 'warn');
+  const logToDB = logLevels.indexOf(level) >= logLevels.indexOf(process.env.DB_LOG_LEVEL || 'warn');
 
   if (logToConsole) {
     if (level === 'debug' || level === 'info') {
@@ -77,32 +55,42 @@ export function Info(message) { createLog(message, 'info') };
 export function Warn(message) { createLog(message, 'warn') }
 export function Err(message) { createLog(message, 'error') }
 
-const dbUpgrades = [
-  null,
-  () => {
-    DB.exec(`DELETE FROM config WHERE key = 'log_level'`);
+const pruningStrategies = {
+  age: async (table, limit) => {
+    const cutoff = Date.now() - (limit * 24 * 60 * 60 * 1000);
+    const { changes } = await DB.run(`DELETE FROM ${table} WHERE timestamp < ?`, cutoff);
+    Info(`Deleted ${changes} ${table} older than ${limit} days`);
   },
-  () => {
-    DB.exec('DROP TABLE users');
-  },
-  () => {
-    DB.exec('DROP TABLE rooms');
+  count: async (table, limit) => {
+    const partition = table === 'messages' ? 'PARTITION BY room' : '';
+    const { changes } = await DB.run(`
+      DELETE FROM ${table} WHERE id IN (
+        SELECT id FROM (
+          SELECT id, ROW_NUMBER() OVER (
+            ${partition} ORDER BY timestamp DESC, id DESC
+          ) AS rn FROM ${table}
+        ) WHERE rn > ?
+      )`, limit);
+    Info(`Deleted ${changes} ${table} to keep at most ${limit}${table === 'messages' ? ' per room' : ''}`);
   }
-];
+};
+async function pruneTable(table, strategy, limit) {
+  if (strategy === 'none') return;
+  if (!pruningStrategies[strategy]) return Warn(`Invalid pruning strategy for ${table}: ${strategy}`);
+  if (!Number.isInteger(limit) || limit <= 0) return Warn(`Invalid pruning limit for ${table}: ${limit}`);
+  
+  pruningStrategies[strategy]();
+}
 
-await (async () => {
-  let userVersion = await DB.get('PRAGMA user_version').then(row => row.user_version);
-  if (userVersion === 0) return DB.exec(`PRAGMA user_version = ${dbUpgrades.length - 1}`);
-  while (userVersion < dbUpgrades.length) {
-    userVersion++;
-    const upgradeFunc = dbUpgrades[userVersion];
-    if (upgradeFunc) {
-      await upgradeFunc();
-      Warn(`Upgraded database to version ${userVersion}`);
-    }
-  }
-  await DB.exec(`PRAGMA user_version = ${dbUpgrades.length - 1}`);
-})();
+export async function Cleanup() {
+  const messages = process.env.MESSAGE_PRUNING_STRATEGY || 'none';
+  const logs = process.env.LOG_PRUNING_STRATEGY || 'none';
+  if (messages === 'none' && logs === 'none') return;
+
+  Info('Starting database cleanup');
+  await pruneTable('messages', messages, parseInt(process.env.MESSAGE_PRUNING_LIMIT, 10));
+  await pruneTable('logs', logs, parseInt(process.env.LOG_PRUNING_LIMIT, 10));
+}
 
 Info('Database initialized successfully');
 

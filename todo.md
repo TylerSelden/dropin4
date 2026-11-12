@@ -10,6 +10,8 @@
 - [X] Add loading spinner
 - [X] Error messages
 - [X] Scrolling when messages come in while user is at the bottom (including when they first join a room)
+- [X] Max logs length
+- [X] Clean up DB upgrades
 - [X] Disable sending when message content is invalid
 - [X] Navigation to `/home` unsubscribes from the current room
   - [X] Unsubscribing clears messages locally (client)
@@ -24,13 +26,15 @@
 - [ ] Add an npm format script that prettifies and searches for unused code
 - [X] Make username size larger
 - [X] Replay connection logic after a reconnect
-- [ ] Migrate db config options to .env or something
-  - [ ] Remove traces in the code
+- [X] Migrate db config options to .env or something
+  - [X] Remove traces in the code
+- [ ] Join button disabled when disconnected to server, or loading icon when connecting
 - [X] Non-persistent rooms
-- [ ] Max message age (and daily pruning routine)
+- [X] Max message age (and daily pruning routine)
 - [X] Better contrast in `!` message in home menu
   - [X] ~~Change the `!` to use the markdown library?~~
 - [X] ~~Change checkmark color to be deeper~~
+- [X] Dev .env files
 - [X] ~~Convert `connected` element to a badge~~
 - [ ] package.json build script (add build dir to gitignore)
 - [ ] package.json start script (have it make sure there's an existing build)

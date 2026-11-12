@@ -1,9 +1,9 @@
-import DB, { GetConfig, Err, Debug } from './db.js';
+import DB, { Err, Debug } from './db.js';
 import { Schemas } from '../../shared/schemas.js';
 
 function getPage(room, before) {
   if (!before) before = Date.now() + 1000; // A small margin of error
-  const limit = GetConfig('messages_per_page') || 500;
+  const limit = process.env.PAGE_SIZE || 500;
   const query = 'SELECT * FROM messages WHERE room = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT ?';
   return DB.all(query, [room, before, limit]);
 }

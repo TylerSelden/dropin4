@@ -15,7 +15,7 @@ const joiMessages = {
 
 export const Schemas = {
   name: Joi.string().pattern(/^[a-zA-Z0-9_@!\-.]+$/).min(3).max(64).required().messages(joiMessages),
-  messageContent: Joi.string().min(1).max(1024).required().messages(joiMessages),
+  messageContent: Joi.string().min(1).max(25000).required().messages(joiMessages),
   timestamp: Joi.number().min(0).required().messages(joiMessages),
   bool: Joi.boolean().required().messages(joiMessages)
 };

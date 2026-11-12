@@ -4,10 +4,10 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
+  envDir: '../',
   server: {
     port: 8080,
     host: true,
-    allowedHosts: ['backend.benti.dev'],
     proxy: {
       '/socket.io': {
         target: 'http://localhost:8081',
@@ -15,4 +15,4 @@ export default defineConfig({
       }
     }
   }
-})
+});

@@ -1,9 +1,9 @@
 import { Server } from 'socket.io';
-import DB, { GetConfig, Debug, Info, Err } from './src/db.js';
+import DB, { Debug, Info, Err, Cleanup } from './src/db.js';
 import { Events } from './src/events.js';
 import { Assert } from '../shared/schemas.js';
 
-const io = new Server(GetConfig('port'), {
+const io = new Server(process.env.PORT || 8080, {
   cors: {
     origin: '*',
   },
@@ -36,4 +36,8 @@ io.on('connection', (socket) => {
   });
 });
 
-Info(`WebSocket server initialized on port ${GetConfig('port')}`);
+setInterval(() => {
+  Cleanup();
+}, (process.env.DB_CLEANUP_INTERVAL || 24) * 1000 * 60 * 60);
+
+Info(`WebSocket server initialized on port ${process.env.PORT || 8080}`);
