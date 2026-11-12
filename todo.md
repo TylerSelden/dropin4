@@ -32,5 +32,7 @@
   - [X] ~~Change the `!` to use the markdown library?~~
 - [X] ~~Change checkmark color to be deeper~~
 - [X] ~~Convert `connected` element to a badge~~
-- [ ] NPM RUN BUILD
-- [ ] HOSTING STATIC WEB FILES FOR `npm start`!
+- [ ] package.json build script (add build dir to gitignore)
+- [ ] package.json start script (have it make sure there's an existing build)
+- [ ] Dockerfile and docker-compose.yml
+- [ ] Enable the backend to host the pre-built web files
