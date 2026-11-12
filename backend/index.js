@@ -37,5 +37,3 @@ io.on('connection', (socket) => {
 });
 
 Info(`WebSocket server initialized on port ${GetConfig('port')}`);
-
-// TODO: Rate limits

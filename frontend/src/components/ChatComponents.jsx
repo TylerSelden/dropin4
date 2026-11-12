@@ -1,21 +1,10 @@
 import { useRef, useEffect, useLayoutEffect, useState, Fragment } from 'react';
+import { UseSocket } from './SocketContext';
 import { IoIosSend } from 'react-icons/io';
 import { BsFillMarkdownFill } from "react-icons/bs";
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import { UseSocket } from './SocketContext';
 import { Schemas, Validate } from '../../../shared/schemas';
-
-// TODO: Verify code written today, add reconnect functionality, boot user from /chat if they aren't actually in a room, localStorage on home menu, and paging
-/*
-  TODO:
-    - Multiple rooms functionality
-      - Add reconnect functionality
-    - localStorage on home menu
-    - Paging (load more messages when scrolling up)
-    - Fix textarea flickering and incorrect positioning while typing / resizing on mobile
-    - Smooth Scrolling on new messages
-*/
 
 export function Message({ text, rightSide, attachedTop, attachedBottom }) {
   return (
@@ -92,27 +81,31 @@ export function FineTimestamp({ name, timestamp, rightSide }) {
 }
 
 export function ChatInput() {
-  const { socket, currentRoom } = UseSocket();
+  const { status, socket, currentRoomRef } = UseSocket();
   const textareaRef = useRef(null);
+  const [messageContentIsValid, setMessageContentIsValid] = useState(false);
   const [markdownShowing, setMarkdownShowing] = useState(false);
 
   const send = () => {
     const message = {
-      room: currentRoom,
+      room: currentRoomRef.current,
       content: textareaRef.current.value.trim()
     }
-    const err = Validate(Schemas.message, "Message", message);
-    if (!err) {
+    if (messageContentIsValid && status === "Connected") {
       socket.emit("message", message);
       textareaRef.current.value = "";
       setMarkdownShowing(false);
-      adjustTextareaHeight();
+      handleInput();
+      return;
     }
   };
 
-  const adjustTextareaHeight = (evt) => {
+  const handleInput = (evt) => {
     const textarea = textareaRef.current;
     if (!textarea) return;
+
+    const value = textarea.value.trim();
+    setMessageContentIsValid(Validate(Schemas.messageContent, "Message", value) === null);
 
     const scrollY = window.scrollY;
     const atBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight - 20;
@@ -126,7 +119,7 @@ export function ChatInput() {
     if (!textarea) return;
 
     const resizeObserver = new ResizeObserver(() => {
-      adjustTextareaHeight();
+      handleInput();
     });
 
     resizeObserver.observe(textarea);
@@ -158,7 +151,7 @@ export function ChatInput() {
               send();
             }
           }}
-          onInput={ adjustTextareaHeight }
+          onInput={ handleInput }
         ></textarea>
 
         <div className="absolute left-0 bottom-0 h-[50px] w-full flex items-center justify-end">
@@ -166,8 +159,12 @@ export function ChatInput() {
             <BsFillMarkdownFill size={28} />
           </button>
           <button
-            className="bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-800 active:bg-violet-900 transition-colors z-15"
-            onClick={ () => send() }
+            className={
+              `bg-violet-700 p-1 mr-2 rounded-full hover:bg-violet-800 active:bg-violet-900 transition-colors z-15 transition-opacity duration-100
+              ${(!messageContentIsValid || status !== "Connected") && 'opacity-50'}
+            `}
+            onClick={ send }
+            disabled={ !messageContentIsValid || status !== "Connected" }
           >
             <IoIosSend size={24} />
           </button>

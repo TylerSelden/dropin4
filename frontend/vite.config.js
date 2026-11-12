@@ -10,7 +10,7 @@ export default defineConfig({
     allowedHosts: ['backend.benti.dev'],
     proxy: {
       '/socket.io': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8081',
         ws: true
       }
     }

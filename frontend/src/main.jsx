@@ -5,6 +5,7 @@ import "ldrs/ring";
 import "./app.css";
 
 import { SocketProvider } from "./components/SocketContext";
+import { ToastProvider } from "./components/ToastContext";
 import Spinner from "./components/Spinner";
 
 const Home = lazy(() => import("./routes/home.jsx"));
@@ -12,15 +13,17 @@ const Chat = lazy(() => import("./routes/chat.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <SocketProvider>
-      <BrowserRouter>
-        <Suspense fallback={<Spinner />}>
-          <Routes>
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/*" element={<Home />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </SocketProvider>
+    <ToastProvider>
+      <SocketProvider>
+        <BrowserRouter>
+          <Suspense fallback={<Spinner />}>
+            <Routes>
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/*" element={<Home />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </SocketProvider>
+    </ToastProvider>
   </StrictMode>
 );

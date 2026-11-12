@@ -9,18 +9,21 @@ const joiMessages = {
   'number.base': '{{#label}} must be a number',
   'number.min': '{{#label}} must be at least {#limit}',
   'object.base': '{{#label}} must be an object',
+  'boolean.base': '{{#label}} must be a boolean',
   'any.required': '{{#label}} is required'
 };
 
 export const Schemas = {
   name: Joi.string().pattern(/^[a-zA-Z0-9_@!\-.]+$/).min(3).max(64).required().messages(joiMessages),
-  messageContent: Joi.string().min(1).required().messages(joiMessages),
-  timestamp: Joi.number().min(0).required().messages(joiMessages)
+  messageContent: Joi.string().min(1).max(1024).required().messages(joiMessages),
+  timestamp: Joi.number().min(0).required().messages(joiMessages),
+  bool: Joi.boolean().required().messages(joiMessages)
 };
 
 Schemas.subscribe = Joi.object({
   room: Schemas.name.label('Room Code'),
-  username: Schemas.name.label('Username')
+  username: Schemas.name.label('Username'),
+  reconnect: Schemas.bool.label('Reconnect Flag')
 }).required().messages(joiMessages);
 
 Schemas.page = Joi.object({

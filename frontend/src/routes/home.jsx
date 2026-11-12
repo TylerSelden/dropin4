@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentContainer from "../components/ContentContainer";
 import Logo from "../components/Logo";
@@ -38,12 +38,12 @@ export default function Home() {
 
     if (errs[0] || errs[1]) return;
 
-    if (!prevRooms.includes(roomRef.current.value)) {
+    if (prevRooms[0] !== roomRef.current.value) {
       const newRooms = [roomRef.current.value, ...prevRooms].slice(0, 32);
       setPrevRooms(newRooms);
       localStorage.setItem("dropin-prevRooms", JSON.stringify(newRooms));
     }
-    if (!prevUsernames.includes(usernameRef.current.value)) {
+    if (prevUsernames[0] !== usernameRef.current.value) {
       const newUsernames = [usernameRef.current.value, ...prevUsernames].slice(0, 32);
       setPrevUsernames(newUsernames);
       localStorage.setItem("dropin-prevUsernames", JSON.stringify(newUsernames));
@@ -51,7 +51,8 @@ export default function Home() {
 
     socket.emit("subscribe", {
       room: roomRef.current.value,
-      username: usernameRef.current.value
+      username: usernameRef.current.value,
+      reconnect: false
     }, () => {
       nav("/chat");
     });
