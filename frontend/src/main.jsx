@@ -13,17 +13,17 @@ const Chat = lazy(() => import("./routes/chat.jsx"));
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ToastProvider>
-      <SocketProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <ToastProvider>
+        <SocketProvider>
           <Suspense fallback={<Spinner />}>
             <Routes>
               <Route path="/chat" element={<Chat />} />
               <Route path="/*" element={<Home />} />
             </Routes>
           </Suspense>
-        </BrowserRouter>
-      </SocketProvider>
-    </ToastProvider>
+        </SocketProvider>
+      </ToastProvider>
+    </BrowserRouter>
   </StrictMode>
 );

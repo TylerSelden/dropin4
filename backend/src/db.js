@@ -28,6 +28,8 @@ await DB.exec(`
     content TEXT NOT NULL,
     timestamp INTEGER NOT NULL
  );
+
+ CREATE INDEX IF NOT EXISTS idx_messages_room_ts ON messages(room, timestamp);
 `);
 
 const logLevels = ['debug', 'info', 'warn', 'error'];

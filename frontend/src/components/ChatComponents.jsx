@@ -175,8 +175,34 @@ export function ChatInput() {
 }
 
 export function ChatContainer({ messages, username }) {
+  const { socket, currentRoomRef } = UseSocket();
   const chatRef = useRef(null);
+  const chatInitialized = useRef(false);
   const wasAtBottom = useRef(true);
+  const sentinelRef = useRef(null);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+  const loadingRef = useRef(false);
+  const prevScrollHeight = useRef(0);
+  const prevOldest = useRef(null);
+
+  useEffect(() => {
+    loadingRef.current = false;
+  }, [messages]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      const current = messagesRef.current;
+      if (!chatInitialized.current || !entry.isIntersecting || !current.length || loadingRef.current) return;
+      loadingRef.current = true;
+      socket.emit("page", {
+        room: currentRoomRef.current,
+        timestamp: current[0].timestamp
+      });
+    });
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [socket, currentRoomRef]);
 
   const handleScroll = () => {
     const chat = chatRef.current;
@@ -186,31 +212,45 @@ export function ChatContainer({ messages, username }) {
 
   useLayoutEffect(() => {
     const chat = chatRef.current;
-    if (!chat) return;
-    if (wasAtBottom.current) chat.scrollTo({ top: chat.scrollHeight, behavior: 'smooth' });
+    const oldest = messages[0]?.timestamp ?? null;
+    const prepended = chatInitialized.current && prevOldest.current !== null && oldest !== null && oldest < prevOldest.current;
+
+    if (prepended) {
+      chat.scrollTop = chat.scrollHeight - prevScrollHeight.current;
+    } else if (wasAtBottom.current) {
+      chat.scrollTo({
+        top: chat.scrollHeight,
+        behavior: chatInitialized.current ? 'smooth' : 'auto'
+      });
+    }
+
+    prevScrollHeight.current = chat.scrollHeight;
+    prevOldest.current = oldest;
+    chatInitialized.current = true;
   }, [messages]);
 
   const messageGroups = [];
-  messages.sort((a, b) => a.timestamp - b.timestamp);
 
   messages.forEach((message) => {
     const lastGroup = messageGroups[messageGroups.length - 1];
-    if (lastGroup && lastGroup.username === message.username) {
-      const firstGroupMessage = lastGroup.messages[0];
-      if ((message.timestamp - firstGroupMessage.timestamp) < 5 * 60 * 1000) return lastGroup.messages.push({ content: message.content, timestamp: message.timestamp });
+
+    if (lastGroup && lastGroup.username === message.username && message.timestamp - lastGroup.messages[0].timestamp < 5 * 60 * 1000) {
+      lastGroup.messages.push(message);
+    } else {
+      messageGroups.push({ username: message.username, messages: [message] });
     }
-    messageGroups.push({ username: message.username, messages: [{ content: message.content, timestamp: message.timestamp }] });
   });
 
   return (
-    <main className="px-4 pb-20 min-h-0 overflow-y-auto" ref={ chatRef } onScroll={ handleScroll }>
+    <main className="relative px-4 pb-20 flex-grow overflow-y-auto" ref={ chatRef } onScroll={ handleScroll }>
+      <div className="absolute -z-100 top-0 left-0 w-full h-75" ref={ sentinelRef }></div>
       { messageGroups.map((group, groupIndex) => {
-        const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).getDate() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).getDate());
+        const broadTimestampNeeded = groupIndex === 0 || (new Date(group.messages[0].timestamp).toDateString() !== new Date(messageGroups[groupIndex - 1].messages[0].timestamp).toDateString());
         const rightSide = group.username === username;
         return (
           <Fragment key={groupIndex}>
             { broadTimestampNeeded && <BroadTimestamp timestamp={group.messages[0].timestamp} /> }
-            <MessageGroup key={groupIndex} rightSide={rightSide}>
+            <MessageGroup rightSide={rightSide}>
               { group.messages.map((message, messageIndex) => {
                 const attachedTop = messageIndex > 0;
                 const attachedBottom = messageIndex < group.messages.length - 1;

@@ -1,16 +1,28 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UseToast } from "./ToastContext";
 import { io } from "socket.io-client";
 
 const socketContext = createContext();
 
+function sortMessages(messages) {
+  return messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+}
+
 export function SocketProvider({ children }) {
   const { addToast } = UseToast();
+  const loc = useLocation();
+  const nav = useNavigate();
   const [socket, setSocket] = useState();
   const [status, setStatus] = useState("Disconnected");
   const [messages, setMessages] = useState([]);
   const currentRoomRef = useRef(null);
   const currentUsernameRef = useRef(null);
+
+
+  useEffect(() => {
+    if (loc.pathname !== "/chat" && currentRoomRef.current && currentUsernameRef.current) nav("/chat");
+  }, [nav, messages]);
 
   useEffect(() => {
     const s = io(import.meta.env.VITE_SOCKET_URL, {
@@ -56,11 +68,11 @@ export function SocketProvider({ children }) {
     });
 
     s.on("page", (data) => {
-      setMessages((prev) => [...prev, ...data.messages]);
+      setMessages((prev) => sortMessages([...prev, ...data.messages]));
     });
 
     s.on("message", (data) => {
-      setMessages((prev) => [...prev, data]);
+      setMessages((prev) => sortMessages([...prev, data]));
     });
 
 

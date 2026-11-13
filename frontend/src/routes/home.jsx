@@ -7,6 +7,7 @@ import { CiChat1 } from "react-icons/ci";
 import { PiLightning } from "react-icons/pi";
 import { GoLock } from "react-icons/go";
 import { FiEyeOff } from "react-icons/fi";
+import "ldrs/ring";
 
 import { Schemas, Validate } from "../../../shared/schemas";
 import { UseSocket } from "../components/SocketContext";
@@ -18,6 +19,7 @@ export default function Home() {
   const [usernameErr, setUsernameErr] = useState();
   const [roomErr, setRoomErr] = useState();
   const { socket, status } = UseSocket();
+  const [isJoining, setIsJoining] = useState(false);
 
   const [prevRooms, setPrevRooms] = useState(() => {
     return JSON.parse(localStorage.getItem("dropin-prevRooms") || "[]");
@@ -54,7 +56,7 @@ export default function Home() {
       username: usernameRef.current.value,
       reconnect: false
     }, () => {
-      nav("/chat");
+      setIsJoining(true);
     });
   };
 
@@ -106,16 +108,22 @@ export default function Home() {
         <p className="ml-1 mt-1 text-sm text-gray-500">
           Add <span className="bg-gray-700 text-gray-400 px-1 rounded">!</span> prefix for non-persistent rooms
         </p>
-        <button
-          className={`
-            w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md transition-colors
-            ${ status === "Connected" ? "hover:bg-violet-800 active:bg-violet-900 cursor-pointer" : "opacity-50 cursor-default"}
-            `}
-          onClick={ join }
-          disabled={ status !== "Connected" }
-        >
-          { status === "Connected" ? "Join" : "Connecting..." }
-        </button>
+        { isJoining ? (
+          <div className="flex justify-center mt-6">
+            <l-ring size="50" color="#8e51ff" />
+          </div>
+        ) : (
+          <button
+            className={`
+              w-full font-semibold text-lg mt-6 bg-violet-700 text-white p-2 rounded-md transition-colors
+              ${ status === "Connected" ? "hover:bg-violet-800 active:bg-violet-900 cursor-pointer" : "opacity-50 cursor-default"}
+              `}
+            onClick={ join }
+            disabled={ status !== "Connected" }
+          >
+            { status === "Connected" ? "Join" : "Connecting..." }
+          </button>
+        )}
       </div>
 
       <hr className="my-8 border-gray-600" />

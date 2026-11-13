@@ -2,8 +2,8 @@ import DB, { Err, Debug } from './db.js';
 import { Schemas } from '../../shared/schemas.js';
 
 function getPage(room, before) {
-  if (!before) before = Date.now() + 1000; // A small margin of error
-  const limit = process.env.PAGE_SIZE || 500;
+  if (!before) before = Date.now();
+  const limit = parseInt(process.env.PAGE_SIZE, 10) || 500;
   const query = 'SELECT * FROM messages WHERE room = ? AND timestamp < ? ORDER BY timestamp DESC LIMIT ?';
   return DB.all(query, [room, before, limit]);
 }
@@ -35,7 +35,7 @@ export const Events = {
     }
   },
   page: {
-    Schema: Schemas.page,
+    schema: Schemas.page,
     handler: async (io, socket, message) => {
       const { room, timestamp } = message;
       if (!socket.rooms.has(room)) throw new Error('Must be subscribed to room to request messages');

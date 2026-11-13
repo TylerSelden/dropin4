@@ -15,7 +15,7 @@
 - [X] Disable sending when message content is invalid
 - [X] Navigation to `/home` unsubscribes from the current room
   - [X] Unsubscribing clears messages locally (client)
-- [ ] Paging (load more messages when scrolling up)
+- [X] Paging (load more messages when scrolling up)
 - [X] ~~Fix textarea flickering and incorrect positioning while typing / resizing on mobile~~ (unfixable, thanks Apple)
 - [X] Smooth Scrolling on new messages
 - [X] Spacing that's less ugly
@@ -40,3 +40,4 @@
 - [ ] package.json start script (have it make sure there's an existing build)
 - [ ] Dockerfile and docker-compose.yml
 - [ ] Enable the backend to host the pre-built web files
+- [ ] Write a README.md
