@@ -1,5 +1,5 @@
-import { createServer } from "node:http";
 import { existsSync } from "node:fs";
+import { createServer } from "node:http";
 import path from "node:path";
 import express from "express";
 import { Server } from "socket.io";
@@ -22,14 +22,12 @@ const distPath = path.resolve(import.meta.dirname, "../frontend/dist");
 
 if (process.env.NODE_ENV === "production") {
 	if (!existsSync(path.resolve(import.meta.dirname, "../frontend/dist"))) {
-		Err(
-			"Frontend build not found. Please run `npm run build` first.",
-		);
+		Err("Frontend build not found. Please run `npm run build` first.");
 		process.exit(1);
 	}
 
 	app.use(express.static(distPath));
-	app.get("/{*splat}", (req, res) => {
+	app.get("/{*splat}", (_req, res) => {
 		res.sendFile(path.join(distPath, "index.html"));
 	});
 }

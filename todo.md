@@ -34,8 +34,8 @@
 - [x] Dev .env files
 - [x] ~~Convert `connected` element to a badge~~
 - [x] Add npm scripts that formats, prettifies and searches for unused code
-- [X] package.json build script (add build dir to gitignore)
-- [X] package.json start script (have it make sure there's an existing build)
-- [ ] Dockerfile and docker-compose.yml
-- [X] Enable the backend to host the pre-built web files
+- [x] package.json build script (add build dir to gitignore)
+- [x] package.json start script (have it make sure there's an existing build)
+- [X] Dockerfile and docker-compose.yml
+- [x] Enable the backend to host the pre-built web files
 - [ ] Write a README.md
