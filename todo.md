@@ -1,7 +1,5 @@
 ## To do:
 
-### Beta launch:
-
 - [X] Verify code written in 8b5198
 - [X] Boot user from `/chat` if they aren't acgually in a room
 - [X] Enter on `/home` triggers the Join button
@@ -35,7 +33,7 @@
 - [X] ~~Change checkmark color to be deeper~~
 - [X] Dev .env files
 - [X] ~~Convert `connected` element to a badge~~
-- [ ] Add an npm format script that prettifies and searches for unused code
+- [X] Add npm scripts that formats, prettifies and searches for unused code
 - [ ] package.json build script (add build dir to gitignore)
 - [ ] package.json start script (have it make sure there's an existing build)
 - [ ] Dockerfile and docker-compose.yml

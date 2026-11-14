@@ -2,7 +2,9 @@
   "name": "dropin",
   "type": "module",
   "scripts": {
-    "dev": "concurrently --kill-others-on-fail -n BACKEND,FRONTEND -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\""
+    "dev": "concurrently --kill-others-on-fail -n BACKEND,FRONTEND -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "check": "biome check .",
+    "fix": "biome check --write ."
   },
   "workspaces": [
     "frontend",
@@ -13,6 +15,7 @@
     "joi": "^18.0.2"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.7",
     "concurrently": "^10.0.7"
   }
 }
