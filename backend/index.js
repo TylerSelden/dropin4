@@ -1,14 +1,38 @@
+import { createServer } from "node:http";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import express from "express";
 import { Server } from "socket.io";
 import { Assert } from "../shared/schemas.js";
 import { Cleanup, Debug, Err, Info } from "./src/db.js";
 import { Events } from "./src/events.js";
 
-const io = new Server(process.env.PORT || 8080, {
+const PORT = process.env.PORT || 8080;
+const app = express();
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
 	cors: {
 		origin: "*",
 	},
 	transports: ["websocket", "polling"],
 });
+
+const distPath = path.resolve(import.meta.dirname, "../frontend/dist");
+
+if (process.env.NODE_ENV === "production") {
+	if (!existsSync(path.resolve(import.meta.dirname, "../frontend/dist"))) {
+		Err(
+			"Frontend build not found. Please run `npm run build` first.",
+		);
+		process.exit(1);
+	}
+
+	app.use(express.static(distPath));
+	app.get("/{*splat}", (req, res) => {
+		res.sendFile(path.join(distPath, "index.html"));
+	});
+}
 
 io.on("connection", (socket) => {
 	Debug(`New user connected: ${socket.id}`);
@@ -44,4 +68,6 @@ setInterval(
 	(process.env.DB_CLEANUP_INTERVAL || 24) * 1000 * 60 * 60,
 );
 
-Info(`WebSocket server initialized on port ${process.env.PORT || 8080}`);
+httpServer.listen(PORT, () => {
+	Info(`HTTP server initialized on port ${PORT}`);
+});
