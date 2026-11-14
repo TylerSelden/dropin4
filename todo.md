@@ -36,6 +36,6 @@
 - [x] Add npm scripts that formats, prettifies and searches for unused code
 - [x] package.json build script (add build dir to gitignore)
 - [x] package.json start script (have it make sure there's an existing build)
-- [X] Dockerfile and docker-compose.yml
+- [x] Dockerfile and docker-compose.yml
 - [x] Enable the backend to host the pre-built web files
 - [ ] Write a README.md

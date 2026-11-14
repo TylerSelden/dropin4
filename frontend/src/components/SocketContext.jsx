@@ -18,6 +18,12 @@ export function SocketProvider({ children }) {
 	const [messages, setMessages] = useState([]);
 	const currentRoomRef = useRef(null);
 	const currentUsernameRef = useRef(null);
+	const locRef = useRef(loc);
+	const navRef = useRef(nav);
+	const toastRef = useRef(addToast);
+	locRef.current = loc;
+	navRef.current = nav;
+	toastRef.current = addToast;
 
 	useEffect(() => {
 		const s = io(import.meta.env.VITE_SOCKET_URL, {
@@ -59,17 +65,17 @@ export function SocketProvider({ children }) {
 
 		s.on("err", (data) => {
 			console.error(data);
-			addToast("error", data);
+			toastRef.current("error", data);
 		});
 
 		s.on("page", (data) => {
 			setMessages((prev) => sortMessages([...prev, ...data.messages]));
 			if (
-				loc.pathname !== "/chat" &&
+				locRef.current.pathname !== "/chat" &&
 				currentRoomRef.current &&
 				currentUsernameRef.current
 			)
-				nav("/chat");
+				navRef.current("/chat");
 		});
 
 		s.on("message", (data) => {
@@ -80,7 +86,7 @@ export function SocketProvider({ children }) {
 			s.disconnect();
 			setSocket(null);
 		};
-	}, [addToast, loc.pathname, nav]);
+	}, []);
 
 	return (
 		<socketContext.Provider
