@@ -2,13 +2,16 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	--font-sans:
+		"Roboto", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+		"Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-html, body {
-  @apply bg-slate-900 min-h-screen font-sans text-neutral-300;
+html,
+body {
+	@apply bg-slate-900 min-h-screen font-sans text-neutral-300;
 }
 
 code {
-  @apply overflow-x-auto max-w-full;
+	@apply overflow-x-auto max-w-full;
 }

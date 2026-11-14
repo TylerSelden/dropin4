@@ -1,39 +1,39 @@
 ## To do:
 
-- [X] Verify code written in 8b5198
-- [X] Boot user from `/chat` if they aren't acgually in a room
-- [X] Enter on `/home` triggers the Join button
-  - [X] Join button cursor changes to pointer on hover
-- [X] localStorage on home menu
-- [X] Add loading spinner
-- [X] Error messages
-- [X] Scrolling when messages come in while user is at the bottom (including when they first join a room)
-- [X] Max logs length
-- [X] Clean up DB upgrades
-- [X] Disable sending when message content is invalid
-- [X] Navigation to `/home` unsubscribes from the current room
-  - [X] Unsubscribing clears messages locally (client)
-- [X] Paging (load more messages when scrolling up)
-- [X] ~~Fix textarea flickering and incorrect positioning while typing / resizing on mobile~~ (unfixable, thanks Apple)
-- [X] Smooth Scrolling on new messages
-- [X] Spacing that's less ugly
-- [X] Fix spacing issues when username width exceeds message width
-- [X] Add `Beta` badge to the title
-- [X] ~~Add the chat name at the top~~ (security purposes)
-- [X] ~~Rate Limits~~ (should be handled by the host)
-- [X] Make username size larger
-- [X] Replay connection logic after a reconnect
-- [X] Migrate db config options to .env or something
-  - [X] Remove traces in the code
-- [X] Join button disabled when disconnected to server
-- [X] Non-persistent rooms
-- [X] Max message age (and daily pruning routine)
-- [X] Better contrast in `!` message in home menu
-  - [X] ~~Change the `!` to use the markdown library?~~
-- [X] ~~Change checkmark color to be deeper~~
-- [X] Dev .env files
-- [X] ~~Convert `connected` element to a badge~~
-- [X] Add npm scripts that formats, prettifies and searches for unused code
+- [x] Verify code written in 8b5198
+- [x] Boot user from `/chat` if they aren't acgually in a room
+- [x] Enter on `/home` triggers the Join button
+  - [x] Join button cursor changes to pointer on hover
+- [x] localStorage on home menu
+- [x] Add loading spinner
+- [x] Error messages
+- [x] Scrolling when messages come in while user is at the bottom (including when they first join a room)
+- [x] Max logs length
+- [x] Clean up DB upgrades
+- [x] Disable sending when message content is invalid
+- [x] Navigation to `/home` unsubscribes from the current room
+  - [x] Unsubscribing clears messages locally (client)
+- [x] Paging (load more messages when scrolling up)
+- [x] ~~Fix textarea flickering and incorrect positioning while typing / resizing on mobile~~ (unfixable, thanks Apple)
+- [x] Smooth Scrolling on new messages
+- [x] Spacing that's less ugly
+- [x] Fix spacing issues when username width exceeds message width
+- [x] Add `Beta` badge to the title
+- [x] ~~Add the chat name at the top~~ (security purposes)
+- [x] ~~Rate Limits~~ (should be handled by the host)
+- [x] Make username size larger
+- [x] Replay connection logic after a reconnect
+- [x] Migrate db config options to .env or something
+  - [x] Remove traces in the code
+- [x] Join button disabled when disconnected to server
+- [x] Non-persistent rooms
+- [x] Max message age (and daily pruning routine)
+- [x] Better contrast in `!` message in home menu
+  - [x] ~~Change the `!` to use the markdown library?~~
+- [x] ~~Change checkmark color to be deeper~~
+- [x] Dev .env files
+- [x] ~~Convert `connected` element to a badge~~
+- [x] Add npm scripts that formats, prettifies and searches for unused code
 - [ ] package.json build script (add build dir to gitignore)
 - [ ] package.json start script (have it make sure there's an existing build)
 - [ ] Dockerfile and docker-compose.yml

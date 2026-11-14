@@ -1,47 +1,62 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 const joiMessages = {
-  'string.base': '{{#label}} must be a string',
-  'string.empty': '{{#label}} cannot be empty',
-  'string.pattern.base': '{{#label}} contains invalid characters',
-  'string.min': '{{#label}} must be at least {#limit} characters',
-  'string.max': '{{#label}} cannot exceed {#limit} characters',
-  'number.base': '{{#label}} must be a number',
-  'number.min': '{{#label}} must be at least {#limit}',
-  'object.base': '{{#label}} must be an object',
-  'boolean.base': '{{#label}} must be a boolean',
-  'any.required': '{{#label}} is required'
+	"string.base": "{{#label}} must be a string",
+	"string.empty": "{{#label}} cannot be empty",
+	"string.pattern.base": "{{#label}} contains invalid characters",
+	"string.min": "{{#label}} must be at least {#limit} characters",
+	"string.max": "{{#label}} cannot exceed {#limit} characters",
+	"number.base": "{{#label}} must be a number",
+	"number.min": "{{#label}} must be at least {#limit}",
+	"object.base": "{{#label}} must be an object",
+	"boolean.base": "{{#label}} must be a boolean",
+	"any.required": "{{#label}} is required",
 };
 
 export const Schemas = {
-  name: Joi.string().pattern(/^[a-zA-Z0-9_@!\-.]+$/).min(3).max(64).required().messages(joiMessages),
-  messageContent: Joi.string().min(1).max(25000).required().messages(joiMessages),
-  timestamp: Joi.number().min(0).required().messages(joiMessages),
-  bool: Joi.boolean().required().messages(joiMessages)
+	name: Joi.string()
+		.pattern(/^[a-zA-Z0-9_@!\-.]+$/)
+		.min(3)
+		.max(64)
+		.required()
+		.messages(joiMessages),
+	messageContent: Joi.string()
+		.min(1)
+		.max(25000)
+		.required()
+		.messages(joiMessages),
+	timestamp: Joi.number().min(0).required().messages(joiMessages),
+	bool: Joi.boolean().required().messages(joiMessages),
 };
 
 Schemas.subscribe = Joi.object({
-  room: Schemas.name.label('Room Code'),
-  username: Schemas.name.label('Username'),
-  reconnect: Schemas.bool.label('Reconnect Flag')
-}).required().messages(joiMessages);
+	room: Schemas.name.label("Room Code"),
+	username: Schemas.name.label("Username"),
+	reconnect: Schemas.bool.label("Reconnect Flag"),
+})
+	.required()
+	.messages(joiMessages);
 
 Schemas.page = Joi.object({
-  room: Schemas.name.label('Room Code'),
-  timestamp: Schemas.timestamp.label('Timestamp')
-}).required().messages(joiMessages);
+	room: Schemas.name.label("Room Code"),
+	timestamp: Schemas.timestamp.label("Timestamp"),
+})
+	.required()
+	.messages(joiMessages);
 
 Schemas.message = Joi.object({
-  room: Schemas.name.label('Room Code'),
-  content: Schemas.messageContent.label('Message Content')
-}).required().messages(joiMessages);
+	room: Schemas.name.label("Room Code"),
+	content: Schemas.messageContent.label("Message Content"),
+})
+	.required()
+	.messages(joiMessages);
 
-const options = { errors: { wrap: { label: '' } } };
+const options = { errors: { wrap: { label: "" } } };
 export function Validate(schema, label, value) {
-  const { error } = schema.label(label).validate(value, options);
-  return error ? error.message : null;
+	const { error } = schema.label(label).validate(value, options);
+	return error ? error.message : null;
 }
 
 export function Assert(schema, label, value) {
-  Joi.assert(value, schema.label(label).required(), options);
+	Joi.assert(value, schema.label(label).required(), options);
 }
