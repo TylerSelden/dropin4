@@ -4,7 +4,8 @@
 	"scripts": {
 		"dev": "concurrently --kill-others-on-fail -n BACKEND,FRONTEND -c blue,green \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
 		"check": "biome check .",
-		"fix": "biome check --write ."
+		"fix": "biome check --write .",
+		"build": "npm run build -w frontend"
 	},
 	"workspaces": [
 		"frontend",
