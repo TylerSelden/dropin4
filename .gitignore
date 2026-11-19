@@ -1,6 +1,5 @@
 *.swp
 node_modules
-docker-data
 .env
 .env.*
 !.env.example

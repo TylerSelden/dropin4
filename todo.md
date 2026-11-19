@@ -38,4 +38,4 @@
 - [x] package.json start script (have it make sure there's an existing build)
 - [x] Dockerfile and docker-compose.yml
 - [x] Enable the backend to host the pre-built web files
-- [ ] Write a README.md
+- [x] Write a README.md
